@@ -14,9 +14,9 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} {t.hero.name}. {t.footer.rights}
         </p>
         <div className="flex items-center gap-5">
-          <IconLink href="https://github.com/user0706" icon={<Github size={18} />} label="GitHub" />
-          <IconLink href="https://www.linkedin.com/in/marko-jovović/" icon={<Linkedin size={18} />} label="LinkedIn" />
-          <IconLink href="mailto:jovovic.marko@yandex.com" icon={<Mail size={18} />} label="Email" />
+          <IconLink href={t.resume.githubUrl} icon={<Github size={18} />} label="GitHub" />
+          <IconLink href={t.resume.linkedinUrl} icon={<Linkedin size={18} />} label="LinkedIn" />
+          <IconLink href={`mailto:${t.resume.email}`} icon={<Mail size={18} />} label="Email" />
         </div>
       </div>
     </footer>

@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "./LanguageProvider";
+import { generateResume } from "@/lib/generateResume";
 
 export default function Navbar() {
   const { t } = useLanguage();
@@ -15,6 +16,7 @@ export default function Navbar() {
     { label: t.nav.skills, href: "#skills" },
     { label: t.nav.projects, href: "#projects" },
     { label: t.nav.experience, href: "#experience" },
+    { label: t.nav.certificates, href: "#certificates" },
     { label: t.nav.contact, href: "#contact" },
   ];
   const [isScrolled, setIsScrolled] = useState(false);
@@ -55,14 +57,12 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <a
-            href="/resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => generateResume(t)}
             className="text-sm px-4 py-2 rounded-lg border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-200"
           >
             {t.nav.resume}
-          </a>
+          </button>
           <LanguageSwitcher />
           <ThemeToggle />
         </div>
@@ -99,14 +99,12 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => { generateResume(t); setMobileOpen(false); }}
                 className="text-sm px-4 py-2 rounded-lg border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-200"
               >
                 {t.nav.resume}
-              </a>
+              </button>
             </div>
           </motion.div>
         )}

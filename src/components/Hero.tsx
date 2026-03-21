@@ -9,7 +9,7 @@ export default function Hero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-24 pb-12 md:pb-20">
       {/* Background gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
@@ -66,11 +66,11 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.0 }}
-          className="mt-12 flex items-center justify-center gap-6"
+          className="mt-12 pb-4 flex items-center justify-center gap-6"
         >
-          <IconLink href="https://github.com/user0706" icon={<Github size={22} />} label="GitHub" />
-          <IconLink href="https://www.linkedin.com/in/marko-jovović/" icon={<Linkedin size={22} />} label="LinkedIn" />
-          <IconLink href="mailto:jovovic.marko@yandex.com" icon={<Mail size={22} />} label="Email" />
+          <IconLink href={t.resume.githubUrl} icon={<Github size={22} />} label="GitHub" />
+          <IconLink href={t.resume.linkedinUrl} icon={<Linkedin size={22} />} label="LinkedIn" />
+          <IconLink href={`mailto:${t.resume.email}`} icon={<Mail size={22} />} label="Email" />
         </motion.div>
       </div>
 
@@ -78,7 +78,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.4 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        className="mt-auto pt-8"
       >
         <a href="#about" aria-label="Scroll down">
           <motion.div

@@ -35,10 +35,10 @@ export default function Contact() {
             <Mail size={24} className="text-accent mx-auto mb-3" />
             <h3 className="font-semibold text-sm mb-1">{t.contact.email}</h3>
             <a
-              href="mailto:jovovic.marko@yandex.com"
+              href={`mailto:${t.resume.email}`}
               className="text-muted text-sm hover:text-accent transition-colors"
             >
-              jovovic.marko@yandex.com
+              {t.resume.email}
             </a>
           </Card>
 
@@ -52,8 +52,8 @@ export default function Contact() {
             <Send size={24} className="text-accent mx-auto mb-3" />
             <h3 className="font-semibold text-sm mb-1">{t.contact.socials}</h3>
             <div className="flex items-center justify-center gap-4 mt-1">
-              <IconLink href="https://github.com/user0706" icon={<Github size={18} />} label="GitHub" className="hover:text-accent" />
-              <IconLink href="https://www.linkedin.com/in/marko-jovović/" icon={<Linkedin size={18} />} label="LinkedIn" className="hover:text-accent" />
+              <IconLink href={t.resume.githubUrl} icon={<Github size={18} />} label="GitHub" className="hover:text-accent" />
+              <IconLink href={t.resume.linkedinUrl} icon={<Linkedin size={18} />} label="LinkedIn" className="hover:text-accent" />
             </div>
           </Card>
         </motion.div>
@@ -64,7 +64,7 @@ export default function Contact() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="mt-10"
         >
-          <Button href="mailto:jovovic.marko@yandex.com" variant="primary" size="lg">
+          <Button href={`mailto:${t.resume.email}`} variant="primary" size="lg">
             <Mail size={18} />
             {t.contact.sendEmail}
           </Button>
