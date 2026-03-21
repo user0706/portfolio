@@ -159,6 +159,14 @@ export interface Translations {
   };
 }
 
+const skillItems: Translations["skills"]["items"] = [
+  { key: "backend", skills: [{ name: "Python", level: sl.python }, { name: "Django", level: sl.django }, { name: "Django REST Framework", level: sl.drf }, { name: "REST API / JSON API", level: sl.restApi }] },
+  { key: "frontend", skills: [{ name: "React", level: sl.react }, { name: "Angular", level: sl.angular }, { name: "Next.js", level: sl.nextjs }, { name: "HTML / CSS", level: sl.htmlCss }, { name: "JavaScript / TypeScript", level: sl.jsts }] },
+  { key: "databaseCloud", skills: [{ name: "PostgreSQL", level: sl.postgresql }, { name: "MySQL", level: sl.mysql }, { name: "AWS (S3, RDS, DynamoDB, Lambda)", level: sl.aws }, { name: "SQL", level: sl.sql }] },
+  { key: "toolsDesign", skills: [{ name: "Git / GitHub", level: sl.git }, { name: "Docker", level: sl.docker }, { name: "Linux", level: sl.linux }, { name: "Figma / Penpot", level: sl.figma }, { name: "Jira", level: sl.jira }] },
+  { key: "ai", hasSubtitle: true, skills: [{ name: "Windsurf", level: sl.windsurf }, { name: "Cursor", level: sl.cursor }, { name: "ChatGPT / Claude", level: sl.chatgpt }, { name: "GitHub Copilot", level: sl.copilot }] },
+];
+
 export const translations: Record<Locale, Translations> = {
   en: {
     nav: {
@@ -204,13 +212,7 @@ export const translations: Record<Locale, Translations> = {
         ai: "AI-Assisted Development",
         aiSubtitle: "Leveraging AI coding tools to accelerate development workflows and stay aligned with industry trends.",
       },
-      items: [
-        { key: "backend", skills: [{ name: "Python", level: sl.python }, { name: "Django", level: sl.django }, { name: "Django REST Framework", level: sl.drf }, { name: "REST API / JSON API", level: sl.restApi }] },
-        { key: "frontend", skills: [{ name: "React", level: sl.react }, { name: "Angular", level: sl.angular }, { name: "Next.js", level: sl.nextjs }, { name: "HTML / CSS", level: sl.htmlCss }, { name: "JavaScript / TypeScript", level: sl.jsts }] },
-        { key: "databaseCloud", skills: [{ name: "PostgreSQL", level: sl.postgresql }, { name: "MySQL", level: sl.mysql }, { name: "AWS (S3, RDS, DynamoDB, Lambda)", level: sl.aws }, { name: "SQL", level: sl.sql }] },
-        { key: "toolsDesign", skills: [{ name: "Git / GitHub", level: sl.git }, { name: "Docker", level: sl.docker }, { name: "Linux", level: sl.linux }, { name: "Figma / Penpot", level: sl.figma }, { name: "Jira", level: sl.jira }] },
-        { key: "ai", hasSubtitle: true, skills: [{ name: "Windsurf", level: sl.windsurf }, { name: "Cursor", level: sl.cursor }, { name: "ChatGPT / Claude", level: sl.chatgpt }, { name: "GitHub Copilot", level: sl.copilot }] },
-      ],
+      items: skillItems,
     },
     projects: {
       label: "Projects",
@@ -421,13 +423,7 @@ export const translations: Record<Locale, Translations> = {
         ai: "Разработка с ИИ",
         aiSubtitle: "Использование ИИ-инструментов для ускорения процессов разработки и соответствия требованиям индустрии.",
       },
-      items: [
-        { key: "backend", skills: [{ name: "Python", level: sl.python }, { name: "Django", level: sl.django }, { name: "Django REST Framework", level: sl.drf }, { name: "REST API / JSON API", level: sl.restApi }] },
-        { key: "frontend", skills: [{ name: "React", level: sl.react }, { name: "Angular", level: sl.angular }, { name: "Next.js", level: sl.nextjs }, { name: "HTML / CSS", level: sl.htmlCss }, { name: "JavaScript / TypeScript", level: sl.jsts }] },
-        { key: "databaseCloud", skills: [{ name: "PostgreSQL", level: sl.postgresql }, { name: "MySQL", level: sl.mysql }, { name: "AWS (S3, RDS, DynamoDB, Lambda)", level: sl.aws }, { name: "SQL", level: sl.sql }] },
-        { key: "toolsDesign", skills: [{ name: "Git / GitHub", level: sl.git }, { name: "Docker", level: sl.docker }, { name: "Linux", level: sl.linux }, { name: "Figma / Penpot", level: sl.figma }, { name: "Jira", level: sl.jira }] },
-        { key: "ai", hasSubtitle: true, skills: [{ name: "Windsurf", level: sl.windsurf }, { name: "Cursor", level: sl.cursor }, { name: "ChatGPT / Claude", level: sl.chatgpt }, { name: "GitHub Copilot", level: sl.copilot }] },
-      ],
+      items: skillItems,
     },
     projects: {
       label: "Проекты",
@@ -587,7 +583,7 @@ export const translations: Record<Locale, Translations> = {
       degree: "Бакалавр",
       field: "Мехатроника",
       university: "Университет Нови-Сада, Факультет технических наук",
-      period: "2014 — Present",
+      period: "2014 — н.в.",
     },
     footer: {
       rights: "Все права защищены.",
@@ -638,13 +634,7 @@ export const translations: Record<Locale, Translations> = {
         ai: "Razvoj uz pomoć AI",
         aiSubtitle: "Korišćenje AI alata za kodiranje kako bi se ubrzali razvojni procesi i pratili trendovi industrije.",
       },
-      items: [
-        { key: "backend", skills: [{ name: "Python", level: sl.python }, { name: "Django", level: sl.django }, { name: "Django REST Framework", level: sl.drf }, { name: "REST API / JSON API", level: sl.restApi }] },
-        { key: "frontend", skills: [{ name: "React", level: sl.react }, { name: "Angular", level: sl.angular }, { name: "Next.js", level: sl.nextjs }, { name: "HTML / CSS", level: sl.htmlCss }, { name: "JavaScript / TypeScript", level: sl.jsts }] },
-        { key: "databaseCloud", skills: [{ name: "PostgreSQL", level: sl.postgresql }, { name: "MySQL", level: sl.mysql }, { name: "AWS (S3, RDS, DynamoDB, Lambda)", level: sl.aws }, { name: "SQL", level: sl.sql }] },
-        { key: "toolsDesign", skills: [{ name: "Git / GitHub", level: sl.git }, { name: "Docker", level: sl.docker }, { name: "Linux", level: sl.linux }, { name: "Figma / Penpot", level: sl.figma }, { name: "Jira", level: sl.jira }] },
-        { key: "ai", hasSubtitle: true, skills: [{ name: "Windsurf", level: sl.windsurf }, { name: "Cursor", level: sl.cursor }, { name: "ChatGPT / Claude", level: sl.chatgpt }, { name: "GitHub Copilot", level: sl.copilot }] },
-      ],
+      items: skillItems,
     },
     projects: {
       label: "Projekti",
@@ -804,7 +794,7 @@ export const translations: Record<Locale, Translations> = {
       degree: "Osnovne akademske studije",
       field: "Mehatronika",
       university: "Univerzitet u Novom Sadu, Fakultet tehničkih nauka",
-      period: "2014 — Present",
+      period: "2014 — Trenutno",
     },
     footer: {
       rights: "Sva prava zadržana.",

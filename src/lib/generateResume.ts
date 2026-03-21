@@ -3,6 +3,7 @@ import type { Translations } from "./translations";
 import { interRegular, interBold } from "./interFont";
 
 // ── Color palette ──
+type RGB = [number, number, number];
 const SIDEBAR_BG: RGB = [22, 28, 45];
 const SIDEBAR_TEXT: RGB = [210, 215, 230];
 const SIDEBAR_HEADING: RGB = [255, 255, 255];
@@ -15,7 +16,6 @@ const MAIN_ACCENT: RGB = [99, 102, 241];
 const MAIN_MUTED: RGB = [100, 116, 139];
 const MAIN_LIGHT_BG: RGB = [241, 245, 249];
 
-type RGB = [number, number, number];
 const FONT = "Inter";
 
 // ── Layout constants ──
@@ -40,6 +40,15 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
     return 16;
   }
   return y;
+}
+
+function ensureSidebarSpace(doc: jsPDF, sY: number, needed: number): number {
+  if (sY + needed > PAGE_BOTTOM) {
+    doc.addPage();
+    drawSidebarBg(doc);
+    return 16;
+  }
+  return sY;
 }
 
 function drawSidebarBg(doc: jsPDF) {
@@ -145,8 +154,11 @@ export function generateResume(t: Translations) {
   doc.setTextColor(...SIDEBAR_HEADING);
   doc.text(nameParts[0] || "", SIDEBAR_PAD, sY);
   sY += 7;
-  doc.text(nameParts.slice(1).join(" "), SIDEBAR_PAD, sY);
-  sY += 6;
+  const lastName = nameParts.slice(1).join(" ");
+  if (lastName) {
+    doc.text(lastName, SIDEBAR_PAD, sY);
+    sY += 6;
+  }
 
   doc.setFont(FONT, "normal");
   doc.setFontSize(8.5);
@@ -155,6 +167,7 @@ export function generateResume(t: Translations) {
   sY += 10;
 
   // ── Sidebar: Contact ──
+  sY = ensureSidebarSpace(doc, sY, 20);
   sY = sidebarHeading(doc, t.contact.label, sY);
 
   doc.setFont(FONT, "normal");
@@ -175,6 +188,7 @@ export function generateResume(t: Translations) {
   sY += 4;
 
   // ── Sidebar: Skills ──
+  sY = ensureSidebarSpace(doc, sY, 20);
   sY = sidebarHeading(doc, t.skills.label, sY);
 
   for (const key of skillHighlightKeys) {
@@ -191,6 +205,7 @@ export function generateResume(t: Translations) {
   sY += 2;
 
   // ── Sidebar: Education ──
+  sY = ensureSidebarSpace(doc, sY, 30);
   sY = sidebarHeading(doc, t.education.label, sY);
   doc.setFont(FONT, "bold");
   doc.setFontSize(8);
@@ -381,6 +396,11 @@ export function generateResume(t: Translations) {
     }
   }
 
-  const fileName = t.resume.name.replace(/\s+/g, "_") + "_Resume.pdf";
-  doc.save(fileName);
+  const safeName = t.resume.name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\x20-\x7E]/g, "")
+    .trim()
+    .replace(/\s+/g, "_") || "Resume";
+  doc.save(`${safeName}_Resume.pdf`);
 }
