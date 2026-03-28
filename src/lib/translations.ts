@@ -103,6 +103,7 @@ export interface Translations {
       description: string;
       tags: string[];
       repo: string;
+      website?: string;
       pypi?: string;
       docs?: string;
     }[];
@@ -267,6 +268,13 @@ export const translations: Record<Locale, Translations> = {
           repo: "pyqt6-multiselect-combobox",
           pypi: "https://pypi.org/project/pyqt6-multiselect-combobox/",
           docs: "https://pyqt6-multiselect-combobox.readthedocs.io/en/latest/",
+        },
+        {
+          title: "LessWords",
+          description: "AI-powered 'relationship translator' web app for entertainment only. Paste what someone said, get what they actually meant. Built with Next.js 16, React 19, TailwindCSS 4, and the Gemini API. Features shareable image cards, dark/light theme, and glassmorphism UI.",
+          tags: ["Next.js", "React 19", "TailwindCSS 4", "Gemini API", "AI"],
+          repo: "LessWords",
+          website: "https://lesswords.app",
         },
         {
           title: "PyRex",
@@ -491,6 +499,13 @@ export const translations: Record<Locale, Translations> = {
           tags: ["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript"],
           repo: "portfolio",
         },
+        {
+          title: "LessWords",
+          description: "Веб-приложение «переводчик отношений» на базе ИИ только для развлечения. Вставьте, что сказал человек, и узнайте, что он на самом деле имел в виду. Создано с Next.js 16, React 19, TailwindCSS 4 и Gemini API. Включает карточки для обмена, тёмную/светлую тему и стеклянный UI.",
+          tags: ["Next.js", "React 19", "TailwindCSS 4", "Gemini API", "AI"],
+          repo: "LessWords",
+          website: "https://lesswords.app",
+        },
       ],
     },
     experience: {
@@ -701,6 +716,13 @@ export const translations: Record<Locale, Translations> = {
           description: "Lični portfolio izgrađen sa Next.js, Tailwind CSS i Framer Motion. Podržava svetlu/tamnu temu, responsivan dizajn i glatke animacije skrolovanja.",
           tags: ["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript"],
           repo: "portfolio",
+        },
+        {
+          title: "LessWords",
+          description: "Veb-aplikacija «prevodilac odnosa» bazirana na veštačkoj inteligenciji samo za zabavu. Nalepite šta je neko rekao i saznajte šta je zapravo mislio. Napravljeno sa Next.js 16, React 19, TailwindCSS 4 i Gemini API. Uključuje kartice za deljenje, tamnu/svetlu temu i stakleni UI.",
+          tags: ["Next.js", "React 19", "TailwindCSS 4", "Gemini API", "AI"],
+          repo: "LessWords",
+          website: "https://lesswords.app",
         },
       ],
     },

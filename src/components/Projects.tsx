@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Building2, Lock, BookOpen } from "lucide-react";
+import { Github, Building2, Lock, BookOpen, ExternalLink } from "lucide-react";
 import { SectionHeading, Card, Badge, IconLink, PyPiIcon } from "./ui";
 import { useLanguage } from "./LanguageProvider";
 
@@ -99,6 +99,9 @@ export default function Projects() {
                     </h4>
                     <div className="flex gap-3">
                       <IconLink href={`${t.resume.githubUrl}/${project.repo}`} icon={<Github size={16} />} label="View source on GitHub" />
+                      {project.website && (
+                        <IconLink href={project.website} icon={<ExternalLink size={16} />} label="Visit website" />
+                      )}
                       {project.pypi && (
                         <IconLink href={project.pypi} icon={<PyPiIcon size={16} />} label="View on PyPI" />
                       )}
