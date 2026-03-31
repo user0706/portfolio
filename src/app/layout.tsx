@@ -3,8 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import LanguageProvider from "@/components/LanguageProvider";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -63,8 +61,6 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );
