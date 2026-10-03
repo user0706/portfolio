@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Ziva Meds app icon, rebuilt from ziva/icon.icon/icon.json:
+  a light base fill with the logo layer at 0.85 scale, filled with the brand
+  gradient #CCFAF3 → #66B5E0 running top to 70% of the layer height.
+-->
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="zivaIconBase" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eceef0"/>
+    </linearGradient>
+    <linearGradient id="zivaIconMark" x1="0.5" y1="0" x2="0.5" y2="0.7">
+      <stop offset="0%" stop-color="#CCFAF3"/>
+      <stop offset="100%" stop-color="#66B5E0"/>
+    </linearGradient>
+    <filter id="zivaIconShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#1f4f68" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="229" ry="229" fill="url(#zivaIconBase)"/>
+
+  <g filter="url(#zivaIconShadow)" transform="translate(512 512) scale(0.7233) translate(-600 -600)">
+    <path fill="url(#zivaIconMark)" d="m596.86 590.53c-184.55 212.16-169.92 406.22-245.16 406.92-85.688 0.9375-205.78-249.37-152.53-475.08 6.8438-28.922 63.609-253.31 269.06-324.61 187.92-65.297 418.08 26.297 429.24 117.23 9.375 75.938-141.37 92.531-300.61 275.53z"/>
+    <path fill="url(#zivaIconMark)" d="m645.61 997.55c-29.766-22.922-41.391-57.844-48.703-79.688-28.922-86.391 5.8594-164.39 15.375-185.53 40.922-91.781 146.39-198.37 257.86-177.94 52.922 9.7031 86.297 44.156 96.469 55.688 69.141 78.141 57 209.29 0 292.55-76.219 111.23-244.08 154.22-320.86 95.062z"/>
+  </g>
+</svg>

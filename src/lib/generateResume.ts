@@ -333,11 +333,23 @@ export function generateResume(t: Translations) {
     doc.setFont(FONT, "bold");
     doc.setFontSize(8.5);
     doc.setTextColor(...MAIN_DARK);
+    const projUrl =
+      proj.page
+        ? `https://${t.resume.website}${proj.page}`
+        : proj.website
+          || proj.docs
+          || proj.pypi
+          || (proj.repo ? `${t.resume.githubUrl}/${proj.repo}` : undefined);
+
     doc.text("▸  ", MAIN_X + 1, y);
     const bulletW = doc.getTextWidth("▸  ");
-    const projUrl = proj.docs || `${t.resume.githubUrl}/${proj.repo}`;
-    doc.setTextColor(...MAIN_ACCENT);
-    doc.textWithLink(proj.title, MAIN_X + 1 + bulletW, y, { url: projUrl });
+    if (projUrl) {
+      doc.setTextColor(...MAIN_ACCENT);
+      doc.textWithLink(proj.title, MAIN_X + 1 + bulletW, y, { url: projUrl });
+    } else {
+      doc.setTextColor(...MAIN_DARK);
+      doc.text(proj.title, MAIN_X + 1 + bulletW, y);
+    }
     doc.setTextColor(...MAIN_DARK);
     y += 3.8;
     doc.setFont(FONT, "normal");

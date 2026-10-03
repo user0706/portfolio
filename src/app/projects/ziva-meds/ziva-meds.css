@@ -1,0 +1,717 @@
+/* ---------------------------------------------------------------------------
+   Ziva Meds — product page
+
+   The tokens mirror ZivaDesign.swift (ZColor / ZMetric) one for one, so the
+   page and the device mockups read exactly like the app: ground + white
+   cards, radius 28, a tint always paired with its ink, hatched mint progress,
+   black pill buttons. The dark set is the app's Dark Mode and is applied when
+   the portfolio is in dark mode, or inside any `.ziva-dark` region.
+   --------------------------------------------------------------------------- */
+
+/* Dark tokens first; the light block below wins for `.ziva-light` regions. */
+.dark .ziva-page,
+.ziva-page .ziva-dark {
+  --z-ink: #f2f3f5;
+  --z-secondary: #9aa0ab;
+  --z-placeholder: #7c828c;
+  --z-tertiary: #6b7079;
+  --z-on-ink: #0e0f12;
+
+  --z-ground: #0e0f12;
+  --z-card: #1c1e23;
+  --z-sky-tint: #173447;
+  --z-mint-tint: #12403a;
+  --z-peach-tint: #4a2a1b;
+  --z-track: rgba(255, 255, 255, 0.08);
+  --z-divider: rgba(255, 255, 255, 0.12);
+  --z-fill-strong: rgba(255, 255, 255, 0.1);
+  --z-pending-ring: rgba(255, 255, 255, 0.25);
+  --z-material: rgba(14, 15, 18, 0.72);
+  --z-glass: rgba(28, 30, 35, 0.72);
+  --z-tile-on-tint: rgba(255, 255, 255, 0.1);
+
+  --z-sky-ink: #8fcbef;
+  --z-mint-ink: #7ee6d2;
+  --z-peach-ink: #f0a07e;
+  --z-chart-ink: #5fd6bc;
+  --z-destructive: #ff6b61;
+
+  --z-lg-bg: rgba(28, 30, 35, 0.42);
+  --z-lg-highlight: rgba(255, 255, 255, 0.28);
+  --z-lg-active: rgba(255, 255, 255, 0.14);
+  --z-bezel-shadow: rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+
+.ziva-page,
+.ziva-page .ziva-light {
+  --z-ink: #15171a;
+  --z-secondary: #5e6470;
+  --z-placeholder: #8a8f99;
+  --z-tertiary: #aeb2ba;
+  --z-on-ink: #ffffff;
+
+  --z-ground: #f3f4f6;
+  --z-card: #ffffff;
+  --z-sky-tint: #dff0f9;
+  --z-mint-tint: #ccfaf3;
+  --z-peach-tint: #fbe3d5;
+  --z-track: rgba(21, 23, 26, 0.06);
+  --z-divider: rgba(21, 23, 26, 0.1);
+  --z-fill-strong: rgba(21, 23, 26, 0.08);
+  --z-pending-ring: rgba(21, 23, 26, 0.18);
+  --z-material: rgba(243, 244, 246, 0.72);
+  --z-glass: rgba(255, 255, 255, 0.62);
+  --z-tile-on-tint: rgba(255, 255, 255, 0.7);
+
+  --z-sky-ink: #1f6a94;
+  --z-mint-ink: #0f5e52;
+  --z-peach-ink: #a23a12;
+  --z-chart-ink: #0f7a66;
+  --z-destructive: #c62f27;
+
+  --z-lg-bg: rgba(255, 255, 255, 0.34);
+  --z-lg-highlight: rgba(255, 255, 255, 0.85);
+  --z-lg-active: rgba(255, 255, 255, 0.78);
+  --z-bezel-shadow: rgba(16, 52, 74, 0.45);
+  color-scheme: light;
+}
+
+/* Marks are the same in both appearances: one colour, one meaning. */
+.ziva-page {
+  --z-chart-mint: #17a88f;
+  --z-sky: #66b5e0;
+  --z-mint: #ccfaf3;
+  --z-appointment: #ef5a2a;
+  --z-brand-grad: linear-gradient(180deg, #ccfaf3 0%, #66b5e0 100%);
+
+  background: var(--z-ground);
+  color: var(--z-ink);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    var(--font-inter),
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  /* Tracking is size-specific: body sits at 0, display text tightens below,
+     small labels open up slightly (see .ziva-small). */
+  letter-spacing: 0;
+  text-wrap: pretty;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ziva-page h1,
+.ziva-page h2,
+.ziva-page h3 {
+  text-wrap: balance;
+}
+
+.ziva-small {
+  letter-spacing: 0.01em;
+}
+
+/* Keyboard focus: a sky ring, never removed. */
+.ziva-page :focus-visible {
+  outline: 2px solid var(--z-sky);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.ziva-page ::selection {
+  background: color-mix(in srgb, var(--z-sky) 45%, transparent);
+}
+
+.ziva-dark,
+.ziva-light {
+  background: var(--z-ground);
+  color: var(--z-ink);
+}
+
+/* Type ----------------------------------------------------------------------
+   SF with tight tracking on display sizes: −0.04em on titles, −0.03em on
+   section titles, as the app does. */
+
+.ziva-display {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.ziva-headline {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.07;
+}
+
+.ziva-eyebrow {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--z-chart-ink);
+}
+
+.ziva-muted {
+  color: var(--z-secondary);
+}
+
+.ziva-link {
+  color: var(--z-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--z-ink) 25%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.25s ease, opacity 0.25s ease;
+}
+
+.ziva-link:hover {
+  text-decoration-color: var(--z-ink);
+}
+
+/* Chrome ------------------------------------------------------------------- */
+
+/* Translucent material with a bright top edge (light catching the glass);
+   content scrolls underneath. The divider is a scroll-edge effect — a soft
+   blur that only appears once content has moved under the bar. */
+.ziva-nav {
+  background: var(--z-glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 1px 0 transparent;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.ziva-nav[data-scrolled="true"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 1px 0 var(--z-divider);
+}
+
+.ziva-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 14px;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  mask-image: linear-gradient(to bottom, #000, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ziva-nav[data-scrolled="true"]::after {
+  opacity: 1;
+}
+
+.dark .ziva-page .ziva-nav {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dark .ziva-page .ziva-nav[data-scrolled="true"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 1px 0 var(--z-divider);
+}
+
+.ziva-progressbar {
+  transform-origin: 0%;
+  background: var(--z-chart-mint);
+}
+
+.ziva-navlink {
+  color: var(--z-secondary);
+  transition: color 0.12s ease-out;
+}
+
+.ziva-navlink:hover {
+  color: var(--z-ink);
+}
+
+/* Surfaces ----------------------------------------------------------------- */
+
+.ziva-hero {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -8%, color-mix(in srgb, var(--z-mint-tint) 90%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 40% at 88% 14%, color-mix(in srgb, var(--z-sky-tint) 85%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 36% at 10% 26%, color-mix(in srgb, var(--z-peach-tint) 55%, transparent) 0%, transparent 62%),
+    var(--z-ground);
+}
+
+/* In Dark Mode the tints are deep, so the blobs stay cool and faint. */
+.dark .ziva-page .ziva-hero {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -8%, color-mix(in srgb, var(--z-mint-tint) 55%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 40% at 88% 14%, color-mix(in srgb, var(--z-sky-tint) 60%, transparent) 0%, transparent 65%),
+    var(--z-ground);
+}
+
+.ziva-card {
+  background: var(--z-card);
+  border-radius: 28px;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.3s ease;
+}
+
+.ziva-card--lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 50px -26px color-mix(in srgb, var(--z-ink) 30%, transparent);
+}
+
+.ziva-tint-sky {
+  background: var(--z-sky-tint);
+  color: var(--z-sky-ink);
+}
+
+.ziva-tint-mint {
+  background: var(--z-mint-tint);
+  color: var(--z-mint-ink);
+}
+
+.ziva-tint-peach {
+  background: var(--z-peach-tint);
+  color: var(--z-peach-ink);
+}
+
+.ziva-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  flex-shrink: 0;
+}
+
+.ziva-rule {
+  height: 1px;
+  background: var(--z-divider);
+}
+
+.ziva-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Pills ---------------------------------------------------------------------
+   Feedback lands on pointer-down (80 ms, instant); the release eases back. */
+
+.ziva-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 2.875rem;
+  padding: 0 1.375rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--z-ink);
+  color: var(--z-on-ink);
+  transition:
+    opacity 0.2s ease,
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.3s ease;
+}
+
+.ziva-pill:hover {
+  opacity: 0.86;
+}
+
+.ziva-pill:active {
+  transform: scale(0.97);
+  transition-duration: 0.08s;
+}
+
+.ziva-pill--secondary {
+  background: var(--z-card);
+  color: var(--z-ink);
+  box-shadow: inset 0 0 0 1px var(--z-divider);
+}
+
+.ziva-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border-radius: 999px;
+  font-size: 0.84375rem;
+  font-weight: 600;
+  background: var(--z-card);
+  color: var(--z-ink);
+  box-shadow: inset 0 0 0 1px var(--z-divider);
+}
+
+/* Progress ------------------------------------------------------------------
+   Diagonal mint hatching (period 10, stripe 5, 25° skew), as ZHatchFill. */
+
+.ziva-hatch {
+  background-image: repeating-linear-gradient(
+    115deg,
+    var(--z-chart-mint) 0 5px,
+    transparent 5px 10px
+  );
+}
+
+.ziva-bar {
+  position: relative;
+  border-radius: 999px;
+  background: var(--z-track);
+  overflow: hidden;
+}
+
+.ziva-bar-fill {
+  position: absolute;
+  inset: 0;
+}
+
+/* Spec table --------------------------------------------------------------- */
+
+.ziva-spec-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--z-divider);
+}
+
+@media (min-width: 640px) {
+  .ziva-spec-row {
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Device mockups -----------------------------------------------------------
+   250 pt of screen for a 393 pt iPhone: everything inside is drawn at ×0.64. */
+
+.ziva-phone {
+  width: 268px;
+  max-width: 100%;
+  aspect-ratio: 268 / 560;
+  flex-shrink: 0;
+}
+
+/* The small frame shows the same 252 pt layout at 208 pt: scale 208 / 252. */
+.ziva-phone--sm {
+  width: 224px;
+  --z-phone-scale: 0.8254;
+}
+
+.ziva-phone--sm .ziva-phone-bezel {
+  border-radius: 36px;
+}
+
+.ziva-phone--sm .ziva-phone-screen {
+  border-radius: 30px;
+}
+
+.ziva-phone-bezel {
+  height: 100%;
+  padding: 8px;
+  border-radius: 44px;
+  background: linear-gradient(155deg, #3d3e44 0%, #0e0e11 34%, #16161a 64%, #46474d 100%);
+  box-shadow:
+    0 48px 80px -30px var(--z-bezel-shadow),
+    0 10px 24px -10px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.ziva-phone-screen {
+  position: relative;
+  height: 100%;
+  border-radius: 36px;
+  overflow: hidden;
+  background: var(--z-ground);
+  color: var(--z-ink);
+  transition: background-color 0.3s ease;
+}
+
+.ziva-phone-scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 252px;
+  height: 544px;
+  display: flex;
+  flex-direction: column;
+  transform: scale(var(--z-phone-scale, 1));
+  transform-origin: top left;
+  background: var(--z-ground);
+  color: var(--z-ink);
+  text-align: left;
+  letter-spacing: -0.012em;
+  transition: background-color 0.3s ease;
+}
+
+.ziva-island {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 20px;
+  border-radius: 999px;
+  background: #000;
+  z-index: 20;
+}
+
+.ziva-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 18px 2px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.ziva-screen-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+/* Liquid Glass ---------------------------------------------------------------
+   Four stacked layers, as in iOS 26: the backdrop, blurred and refracted
+   through an SVG turbulence + displacement filter (#ziva-lg-dist, defined
+   once on the page); a translucent tint; a specular highlight where light
+   catches the rim; and the content on top. Content scrolls underneath and
+   bends slightly as it passes behind the glass. */
+
+.ziva-lg {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  isolation: isolate;
+  box-shadow:
+    0 10px 24px -12px rgba(0, 0, 0, 0.38),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.ziva-lg-filter {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  backdrop-filter: blur(2px) saturate(170%);
+  -webkit-backdrop-filter: blur(2px) saturate(170%);
+  filter: url(#ziva-lg-dist);
+}
+
+.ziva-lg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--z-lg-bg);
+}
+
+.ziva-lg-specular {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow:
+    inset 1px 1px 0 var(--z-lg-highlight),
+    inset 0 0 6px var(--z-lg-highlight),
+    inset -0.5px -0.5px 0 rgba(0, 0, 0, 0.05),
+    inset 0 0 0 0.5px var(--z-divider);
+}
+
+.ziva-lg-content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Tab bar: a floating capsule plus a separate search circle. Content keeps
+   scrolling beneath; the fade only softens it so the glass stays legible. */
+
+.ziva-tabbar-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 80px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--z-ground) 78%, transparent) 70%
+  );
+  pointer-events: none;
+}
+
+.ziva-glassbar {
+  position: absolute;
+  left: 10px;
+  right: 60px;
+  bottom: 10px;
+  height: 44px;
+}
+
+.ziva-glassbar .ziva-lg-content {
+  justify-content: space-around;
+  padding: 0 5px;
+}
+
+.ziva-glasscircle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 44px;
+  height: 44px;
+}
+
+.ziva-glasscircle .ziva-lg-content {
+  justify-content: center;
+}
+
+/* Icons and labels are ink on every tab; only the lens marks the selection. */
+.ziva-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 6px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--z-ink);
+}
+
+/* The selected tab sits in its own small glass lens. */
+.ziva-tab.is-on {
+  background: var(--z-lg-active);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Lock Screen behind the Live Activity */
+/* An iOS-style wallpaper: soft petals of mauve over deep violet. */
+.ziva-lock {
+  background:
+    radial-gradient(ellipse 70% 45% at 18% 62%, rgba(214, 172, 192, 0.85) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 55% at 78% 22%, rgba(96, 60, 160, 0.9) 0%, transparent 62%),
+    radial-gradient(ellipse 55% 40% at 60% 80%, rgba(160, 120, 170, 0.6) 0%, transparent 60%),
+    linear-gradient(180deg, #2a1a3d 0%, #1b1428 55%, #120d1c 100%);
+  color: #fff;
+}
+
+.ziva-alarm-pulse {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(23, 168, 143, 0.28) 0%, transparent 68%);
+  animation: ziva-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ziva-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    filter: drop-shadow(0 0 6px rgba(23, 168, 143, 0.15));
+  }
+  50% {
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 26px rgba(23, 168, 143, 0.55));
+  }
+}
+
+/* Glow behind a device shot */
+.ziva-device-glow::before {
+  content: "";
+  position: absolute;
+  inset: 8% -16% 4%;
+  border-radius: 50%;
+  background: var(--z-brand-grad);
+  opacity: 0.35;
+  filter: blur(70px);
+  z-index: -1;
+}
+
+.dark .ziva-page .ziva-device-glow::before,
+.ziva-page .ziva-dark .ziva-device-glow::before {
+  opacity: 0.22;
+}
+
+/* Dynamic Island mock */
+.ziva-di {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* Accessibility preferences ------------------------------------------------
+   Reduced motion keeps the feedback, drops the travel. Reduced transparency
+   makes the glass frosty-solid. More contrast gives surfaces a defined edge. */
+
+@media (prefers-reduced-motion: reduce) {
+  .ziva-alarm-pulse {
+    animation: none;
+  }
+
+  .ziva-card--lift:hover {
+    transform: none;
+  }
+
+  .ziva-pill:active {
+    transform: none;
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ziva-nav,
+  .ziva-lg-filter,
+  .ziva-nav::after {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    filter: none;
+  }
+
+  .ziva-nav,
+  .ziva-lg-overlay {
+    background: var(--z-card);
+  }
+
+  .ziva-nav::after {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .ziva-card,
+  .ziva-lg,
+  .ziva-pill--secondary,
+  .ziva-chip {
+    box-shadow: inset 0 0 0 1px var(--z-ink);
+  }
+
+  .ziva-nav {
+    box-shadow: 0 1px 0 var(--z-ink);
+  }
+}

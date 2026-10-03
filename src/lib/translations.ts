@@ -102,7 +102,8 @@ export interface Translations {
       title: string;
       description: string;
       tags: string[];
-      repo: string;
+      repo?: string;
+      page?: string;
       website?: string;
       pypi?: string;
       docs?: string;
@@ -261,6 +262,12 @@ export const translations: Record<Locale, Translations> = {
         },
       ],
       personal: [
+        {
+          title: "Ziva Meds",
+          description: "Native iOS caregiver medication manager built with SwiftUI and SwiftData. Track medications, schedules, and adherence for multiple patients with AlarmKit reminders, inventory tracking, and privacy-first on-device storage.",
+          tags: ["Swift", "SwiftUI", "SwiftData", "AlarmKit", "iOS"],
+          page: "/projects/ziva-meds",
+        },
         {
           title: "PyQt6 MultiSelect ComboBox",
           description: "Published PyPI package (7.4K+ downloads) providing a feature-rich multi-select combobox widget for PyQt6. Includes Select All, bulk operations, performance optimizations for large datasets, full test coverage, and documentation on ReadTheDocs.",
@@ -480,6 +487,12 @@ export const translations: Record<Locale, Translations> = {
       ],
       personal: [
         {
+          title: "Ziva Meds",
+          description: "Нативное iOS-приложение для управления лекарствами опекунов на SwiftUI и SwiftData. Отслеживание лекарств, расписаний и соблюдения режима для нескольких пациентов с напоминаниями AlarmKit, учётом запасов и хранением данных на устройстве.",
+          tags: ["Swift", "SwiftUI", "SwiftData", "AlarmKit", "iOS"],
+          page: "/projects/ziva-meds",
+        },
+        {
           title: "PyQt6 MultiSelect ComboBox",
           description: "Опубликованный PyPI-пакет (7.4K+ загрузок), предоставляющий многофункциональный виджет мультивыбора для PyQt6. Включает выбор всех, массовые операции, оптимизацию производительности для больших наборов данных, полное покрытие тестами и документацию на ReadTheDocs.",
           tags: ["Python", "PyQt6", "PyPI", "Open Source"],
@@ -697,6 +710,12 @@ export const translations: Record<Locale, Translations> = {
         },
       ],
       personal: [
+        {
+          title: "Ziva Meds",
+          description: "Nativna iOS aplikacija za upravljanje lekovima negovatelja, izgrađena sa SwiftUI i SwiftData. Praćenje lekova, rasporeda i adherence za više pacijenata sa AlarmKit podsetnicima, praćenjem zaliha i privatnošću podataka na uređaju.",
+          tags: ["Swift", "SwiftUI", "SwiftData", "AlarmKit", "iOS"],
+          page: "/projects/ziva-meds",
+        },
         {
           title: "PyQt6 MultiSelect ComboBox",
           description: "Objavljeni PyPI paket (7.4K+ preuzimanja) koji pruža bogat multi-select combobox widget za PyQt6. Uključuje Select All, grupne operacije, optimizacije performansi za velike skupove podataka, puno testno pokriće i dokumentaciju na ReadTheDocs.",
