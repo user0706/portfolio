@@ -985,7 +985,12 @@ function Footer() {
           <Image src="/projects/ziva/AppLogo.svg" alt="" width={18} height={18} aria-hidden />
           <span>Ziva Meds · 1.3 Beta · iOS 26.1 or later</span>
         </div>
-        <span>Designed and built by Marko Jovović</span>
+        <div className="flex items-center gap-4">
+          <Link href="/projects/ziva-meds/privacy" className="ziva-navlink">
+            Privacy Policy
+          </Link>
+          <span>Designed and built by Marko Jovović</span>
+        </div>
       </div>
     </footer>
   );
