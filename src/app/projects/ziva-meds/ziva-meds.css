@@ -455,9 +455,12 @@
   flex-shrink: 0;
 }
 
-/* The small frame shows the same 252 pt layout at 208 pt: scale 208 / 252. */
+/* The small frame shows the same 252 pt layout at 208 pt: scale 208 / 252.
+   Its height follows the scaled screen (544 × 0.8254 = 449) plus the bezel,
+   so no strip of bare screen is left below the content. */
 .ziva-phone--sm {
   width: 224px;
+  aspect-ratio: 224 / 465;
   --z-phone-scale: 0.8254;
 }
 
