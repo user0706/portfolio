@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./ziva-meds.css";
 
 const description =
-  "Native iOS medication manager for caregivers, rebuilt for iOS 26 — schedules, inventory, appointments and adherence for every patient in your care, AlarmKit alarms with a Live Activity countdown, App Lock and encrypted backups, and a SwiftData store that never leaves the phone.";
+  "Native iOS medication manager for caregivers, rebuilt for iOS 26 — schedules, inventory, appointments and adherence for every patient in your care, AlarmKit alarms with a Live Activity countdown, App Lock and encrypted backups, and a SwiftData store that never leaves the phone. Now in public beta on TestFlight.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://markojovovic.dev"),

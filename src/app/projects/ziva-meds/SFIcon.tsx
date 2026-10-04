@@ -37,8 +37,10 @@ function sf(Glyph: FC<SVGProps<SVGSVGElement>>): SFIcon {
   return Icon;
 }
 
+export const Airplane = sf(F7.Airplane);
 export const AlarmFill = sf(F7.AlarmFill);
 export const ArrowCounterclockwise = sf(F7.ArrowCounterclockwise);
+export const ArrowUpRight = sf(F7.ArrowUpRight);
 export const BellFill = sf(F7.BellFill);
 export const BoltFill = sf(F7.BoltFill);
 export const CameraFill = sf(F7.CameraFill);
@@ -61,6 +63,7 @@ export const LockShieldFill = sf(F7.LockShieldFill);
 export const MoonFill = sf(F7.MoonFill);
 export const Person2Fill = sf(F7.Person2Fill);
 export const Plus = sf(F7.Plus);
+export const Qrcode = sf(F7.Qrcode);
 export const Search = sf(F7.Search);
 export const SquareArrowUp = sf(F7.SquareArrowUp);
 export const SunMaxFill = sf(F7.SunMaxFill);

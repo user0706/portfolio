@@ -348,6 +348,50 @@
   box-shadow: inset 0 0 0 1px var(--z-divider);
 }
 
+/* Compact pill for the nav bar. The bar has no room for it on a phone, nor
+   between 64 and 80 rem where the section links are also showing; the hero
+   carries the same invite a screen below. `.ziva-pill` sets display itself,
+   so Tailwind's `hidden` cannot do this. */
+.ziva-pill--sm {
+  height: 2rem;
+  padding: 0 0.875rem;
+  gap: 5px;
+  font-size: 0.8125rem;
+}
+
+@media (width < 40rem), (64rem <= width < 80rem) {
+  .ziva-pill--sm {
+    display: none;
+  }
+}
+
+/* TestFlight QR: a white card in both appearances so any camera reads it. */
+.ziva-qr {
+  display: inline-flex;
+  padding: 14px;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #15171a;
+  box-shadow:
+    0 24px 50px -26px color-mix(in srgb, var(--z-ink) 35%, transparent),
+    inset 0 0 0 1px var(--z-divider);
+}
+
+.ziva-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--z-mint-tint);
+  color: var(--z-mint-ink);
+}
+
 .ziva-chip {
   display: inline-flex;
   align-items: center;

@@ -5,8 +5,10 @@ declare module "framework7-icons/react" {
 
   type F7Icon = FC<SVGProps<SVGSVGElement>>;
 
+  export const Airplane: F7Icon;
   export const AlarmFill: F7Icon;
   export const ArrowCounterclockwise: F7Icon;
+  export const ArrowUpRight: F7Icon;
   export const BellFill: F7Icon;
   export const BoltFill: F7Icon;
   export const CameraFill: F7Icon;
@@ -29,6 +31,7 @@ declare module "framework7-icons/react" {
   export const MoonFill: F7Icon;
   export const Person2Fill: F7Icon;
   export const Plus: F7Icon;
+  export const Qrcode: F7Icon;
   export const Search: F7Icon;
   export const SquareArrowUp: F7Icon;
   export const SunMaxFill: F7Icon;

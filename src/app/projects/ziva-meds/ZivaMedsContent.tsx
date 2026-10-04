@@ -14,6 +14,8 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Airplane,
+  ArrowUpRight,
   BellFill,
   ChartBarFill,
   ChevronLeft,
@@ -25,9 +27,12 @@ import {
   LockShieldFill,
   MoonFill,
   Person2Fill,
+  Qrcode,
   SunMaxFill,
   Timer,
 } from "./SFIcon";
+import { TestFlightQR } from "./TestFlightQR";
+import { TESTFLIGHT_URL } from "./testflight";
 
 import { useTheme } from "@/components/ThemeProvider";
 import {
@@ -124,7 +129,23 @@ const navLinks = [
   { href: "#privacy", label: "Privacy" },
   { href: "#design", label: "Design" },
   { href: "#specs", label: "Specs" },
+  { href: "#beta", label: "Beta" },
 ];
+
+/** External link to the TestFlight invite; opens in a new tab. */
+function TestFlightLink({
+  className = "ziva-pill",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" className={className}>
+      {children}
+    </a>
+  );
+}
 
 function ThemeSwitch() {
   const { theme, toggleTheme } = useTheme();
@@ -184,6 +205,10 @@ function Nav() {
             <ChevronLeft size={13} />
             Portfolio
           </Link>
+          <TestFlightLink className="ziva-pill ziva-pill--sm">
+            <Airplane size={14} />
+            Join the beta
+          </TestFlightLink>
         </div>
       </div>
       <motion.div className="h-[2px] ziva-progressbar" style={{ scaleX }} />
@@ -255,17 +280,18 @@ function Hero() {
         </motion.p>
 
         <motion.div {...fade(0.4)} className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a href="#highlights" className="ziva-pill">
+          <TestFlightLink>
+            <Airplane size={17} />
+            Join the beta on TestFlight
+          </TestFlightLink>
+          <a href="#highlights" className="ziva-pill ziva-pill--secondary">
             See what&rsquo;s inside
             <ChevronRight size={16} />
-          </a>
-          <a href="#specs" className="ziva-pill ziva-pill--secondary">
-            Tech specs
           </a>
         </motion.div>
 
         <motion.p {...fade(0.5)} className="mt-6 text-[0.75rem] font-medium uppercase tracking-[0.14em]" style={{ color: Z.placeholder }}>
-          Version 1.3 · Swift · SwiftUI · iOS 26 · iPhone and iPad
+          Free public beta · Version 1.3 · iOS 26.1 or later · iPhone and iPad
         </motion.p>
 
         <div className="relative mt-12 md:mt-16 flex items-end justify-center gap-5 md:gap-8">
@@ -326,7 +352,7 @@ const highlights = [
     icon: Timer,
     tint: "ziva-tint-mint",
     title: "Live Activity & Dynamic Island",
-    body: "A five-minute countdown before every dose, with Take Now, Later and Skip on the Lock Screen and in the Dynamic Island.",
+    body: "A countdown before every dose, five minutes by default, with Take Now, Later and Skip on the Lock Screen and in the Dynamic Island.",
   },
   {
     icon: Person2Fill,
@@ -350,7 +376,7 @@ const highlights = [
     icon: LockFill,
     tint: "ziva-tint-sky",
     title: "Private by design",
-    body: "On-device SwiftData, App Lock with Face ID, a privacy shield in the app switcher and passphrase-encrypted backups.",
+    body: "On-device SwiftData, App Lock with Face ID, names hidden in alerts by default, a privacy shield in the app switcher and passphrase-encrypted backups.",
   },
 ];
 
@@ -453,7 +479,7 @@ const timings = [
   {
     k: "5 min",
     t: "Pre-alert",
-    d: "A Live Activity counts down to the dose on the Lock Screen, with Take Now, Later and Skip before anything rings.",
+    d: "A Live Activity counts down to the dose on the Lock Screen, with Take Now, Later and Skip before anything rings. Five minutes by default; Off, 10 or 15 in Settings.",
   },
   {
     k: "30 s",
@@ -463,7 +489,7 @@ const timings = [
   {
     k: "60 s × 5",
     t: "Auto-snooze",
-    d: "A watchdog re-arms the dose as a countdown up to five times, then leaves it overdue on Home.",
+    d: "A watchdog re-arms the dose as a countdown, after a minute and up to five times by default, then leaves it overdue on Home. Both are settings.",
   },
   {
     k: "5 min",
@@ -484,7 +510,7 @@ function Alarms() {
           <p className="mt-6 max-w-[40rem] text-[1.0625rem] leading-relaxed" style={{ color: Z.secondary }}>
             Every schedule is registered with AlarmKit, so iOS rings it like a
             clock alarm: full screen, full volume, through silent mode and
-            Focus. Five minutes before, a Live Activity starts counting down, so
+            Focus. Five minutes before, by default, a Live Activity starts counting down, so
             a dose can be logged from the Lock Screen or the Dynamic Island
             without ever opening the app. Every button is an App Intent
             attached to the alarm itself.
@@ -498,7 +524,7 @@ function Alarms() {
               <LockScreenActivity />
             </PhoneFrame>
             <p className="text-[0.8125rem] font-medium" style={{ color: Z.secondary }}>
-              Lock Screen · pre-alert
+              Lock Screen · pre-alert · names shown
             </p>
           </Reveal>
           <Reveal delay={0.12} className="flex flex-col items-center gap-5">
@@ -559,10 +585,12 @@ function Alarms() {
           <p className="mx-auto mt-10 max-w-[42rem] text-center text-[0.875rem] leading-relaxed" style={{ color: Z.placeholder }}>
             Alarms are re-armed at every launch, so a schedule that failed to
             register heals itself instead of staying silent. Decisions made
-            from the Lock Screen are parked by the extension and drained into
+            from the Lock Screen are parked by the intent and drained into
             SwiftData the next time the app comes forward. Snooze on Home gives
             fifteen minutes and falls back to a notification with Take, Snooze
-            and Skip if AlarmKit refuses.
+            and Skip if AlarmKit refuses. With Hide names in alerts, the
+            default, everything shown here outside the app reads
+            &ldquo;Medication&rdquo; instead.
           </p>
         </Reveal>
       </div>
@@ -578,7 +606,12 @@ const privacyPoints = [
   {
     icon: FaceID,
     title: "App Lock",
-    body: "Face ID, Touch ID or the passcode whenever the app comes back from the background. A shield window covers the app-switcher snapshot, and alarms keep ringing while locked.",
+    body: "Face ID, Touch ID or the passcode whenever the app comes back from the background. A shield window always covers the app-switcher snapshot, locked or not, and alarms keep ringing while locked.",
+  },
+  {
+    icon: BellFill,
+    title: "Discreet alerts",
+    body: "Hide names in alerts is on by default: notifications, the system alarm, the Live Activity and a paired watch say “Medication” and never name the patient. The mockups above show it turned off.",
   },
   {
     icon: LockShieldFill,
@@ -588,7 +621,7 @@ const privacyPoints = [
   {
     icon: FolderFill,
     title: "Exports that don’t linger",
-    body: "CSV and PDF exports are written with complete file protection and purged as soon as the share sheet closes. Logs redact every name outside a debugger.",
+    body: "CSV and PDF exports are written with complete file protection and purged as soon as the share sheet or report preview closes. Logs redact every name outside a debugger.",
   },
 ];
 
@@ -856,7 +889,7 @@ const specs: { label: string; value: ReactNode }[] = [
   {
     label: "Alarms",
     value:
-      "AlarmKit weekly schedules with a derived companion id per schedule, so a pending snooze can be found and cancelled from any process. Co-timed schedules share one alarm; an auto-snooze watchdog re-rings up to five times; everything is re-armed at launch.",
+      "AlarmKit weekly schedules with a derived companion id per schedule, so a pending snooze can be found and cancelled from any process. Co-timed schedules share one alarm; an auto-snooze watchdog re-rings after a pause and up to a count set in Settings (one minute, five times by default), as is the heads-up countdown; everything is re-armed at launch.",
   },
   {
     label: "Live Activities",
@@ -866,7 +899,7 @@ const specs: { label: string; value: ReactNode }[] = [
   {
     label: "Notifications",
     value:
-      "UserNotifications categories for dose, pre-dose, appointment and refill reminders, each with Take, Snooze and Skip actions, used as the fallback when AlarmKit is denied.",
+      "UserNotifications categories for dose, pre-dose, appointment and refill reminders, with Take, Snooze and Skip actions on dose reminders, used as the fallback when AlarmKit is denied. Every alert hides patient and medication names unless the setting is turned off.",
   },
   {
     label: "Charts & reports",
@@ -888,7 +921,7 @@ const specs: { label: string; value: ReactNode }[] = [
     value:
       "SwiftUI views over @Observable view models. AlarmService, NotificationService, DoseLogService, InventoryService and MedicationAlarmCoordinator form the service layer; alarm metadata and intents live in a target shared with the widget extension.",
   },
-  { label: "Privacy", value: "No account, no network calls, no third-party SDKs." },
+  { label: "Privacy", value: "No account, no network calls, no third-party SDKs, and a privacy manifest that declares no collected data." },
 ];
 
 function TechSpecs() {
@@ -944,6 +977,106 @@ function TechSpecs() {
 }
 
 /* --------------------------------------------------------------------------
+   Beta — the TestFlight invite
+   -------------------------------------------------------------------------- */
+
+const betaSteps = [
+  {
+    t: "Install TestFlight",
+    d: "Apple's free beta app, from the App Store, on an iPhone or iPad running iOS 26.1 or later.",
+  },
+  {
+    t: "Open the invite",
+    d: "Tap the link on the device, or scan the code with the Camera app. It opens straight in TestFlight.",
+  },
+  {
+    t: "Accept and install",
+    d: "Ziva Meds installs like any app, with an orange dot by its name. Updates arrive through TestFlight.",
+  },
+];
+
+function Beta() {
+  return (
+    <section id="beta" className="py-24 md:py-32 scroll-mt-14" style={{ background: Z.card }}>
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="grid items-center gap-14 md:grid-cols-[1.2fr_1fr] md:gap-16">
+          <Reveal>
+            <Eyebrow>Public beta</Eyebrow>
+            <Headline size="lg" sub="before it ships.">
+              Try Ziva Meds
+            </Headline>
+            <p className="mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed" style={{ color: Z.secondary }}>
+              The beta is open to anyone with an iPhone or iPad through
+              TestFlight, Apple&rsquo;s beta programme. No account with me, no
+              sign-up form: the invite link is the whole thing. Your data stays
+              on your device, exactly as it will in the release.
+            </p>
+
+            <ol className="mt-9 space-y-5">
+              {betaSteps.map((s, i) => (
+                <li key={s.t} className="flex gap-4">
+                  <span className="ziva-step mt-0.5">{i + 1}</span>
+                  <div>
+                    <p className="text-[1rem] font-semibold" style={{ color: Z.ink }}>
+                      {s.t}
+                    </p>
+                    <p className="mt-1 text-[0.90625rem] leading-relaxed" style={{ color: Z.secondary }}>
+                      {s.d}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <TestFlightLink>
+                <Airplane size={17} />
+                Join the beta on TestFlight
+              </TestFlightLink>
+              <a
+                href={TESTFLIGHT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ziva-link ziva-small inline-flex items-center gap-1 text-[0.875rem]"
+              >
+                testflight.apple.com/join/5pGQhfQq
+                <ArrowUpRight size={13} />
+              </a>
+            </div>
+
+            <p className="mt-6 max-w-[34rem] text-[0.8125rem] leading-relaxed" style={{ color: Z.placeholder }}>
+              Beta builds expire 90 days after they are uploaded; a newer build
+              replaces each one before then. To send feedback, take a
+              screenshot inside the app and choose Share Beta Feedback, use
+              the Send Beta Feedback button in TestFlight, or tap Report a Bug
+              in Settings inside Ziva Meds.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.1} className="flex justify-center">
+            <div className="ziva-device-glow relative isolate flex flex-col items-center gap-5">
+              <a
+                href={TESTFLIGHT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ziva-qr"
+                aria-label="Open the Ziva Meds TestFlight invite"
+              >
+                <TestFlightQR size={200} />
+              </a>
+              <p className="inline-flex items-center gap-2 text-[0.8125rem] font-medium" style={{ color: Z.secondary }}>
+                <Qrcode size={15} />
+                Scan with the Camera app
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------------------------------------------------
    Closing
    -------------------------------------------------------------------------- */
 
@@ -967,10 +1100,16 @@ function Closing() {
             the SwiftData schema, the alarm watchdog, the Live Activity, the
             token system and the icon.
           </p>
-          <Link href="/#projects" className="ziva-pill mt-8">
-            Back to portfolio
-            <ChevronRight size={16} />
-          </Link>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <TestFlightLink>
+              <Airplane size={17} />
+              Join the beta
+            </TestFlightLink>
+            <Link href="/#projects" className="ziva-pill ziva-pill--secondary">
+              Back to portfolio
+              <ChevronRight size={16} />
+            </Link>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -986,6 +1125,7 @@ function Footer() {
           <span>Ziva Meds · 1.3 Beta · iOS 26.1 or later</span>
         </div>
         <div className="flex items-center gap-4">
+          <TestFlightLink className="ziva-navlink">TestFlight</TestFlightLink>
           <Link href="/projects/ziva-meds/privacy" className="ziva-navlink">
             Privacy Policy
           </Link>
@@ -1095,6 +1235,7 @@ export default function ZivaMedsContent() {
         <Design />
         <Numbers />
         <TechSpecs />
+        <Beta />
         <Closing />
         <Footer />
       </main>

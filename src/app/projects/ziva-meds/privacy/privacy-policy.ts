@@ -4,6 +4,15 @@
  * This is the same text the app shows in Settings › Legal › Privacy Policy
  * (ziva/Views/Legal/PrivacyPolicyView.swift). The two must be edited together.
  *
+ * Every statement here describes what the app's code actually does. Sources:
+ * storage and recovery in zivaApp.swift and Services/ProtectedStorage.swift,
+ * settings keys in Services/AppSettings.swift, backups and exports in
+ * Views/Settings/DataPrivacyView.swift and Services/BackupCrypto.swift, the PDF in
+ * Views/Reports/ReportPDFView.swift, alerts in Services/AlertPrivacy.swift and
+ * Services/NotificationService.swift, App Lock and the privacy cover in
+ * Views/PrivacyShield.swift, photos in Views/Patients/PatientSupport.swift and
+ * PatientPhotoAdjustView.swift, and the privacy manifest in PrivacyInfo.xcprivacy.
+ *
  * Format: paragraphs are separated by a blank line; a line starting with "• "
  * is a bullet, and consecutive bullets form one list.
  */
@@ -20,7 +29,7 @@ Ziva Meds is a personal organizational application designed to help users organi
 
 Ziva Meds is not a healthcare provider, medical device, pharmacy, medical service, or electronic health records system. The App is not intended to provide medical advice, diagnosis, treatment, or other professional healthcare services.
 
-Ziva Meds is currently distributed as beta software. See Section 16 regarding data loss and recovery.
+Versions of Ziva Meds obtained through Apple's TestFlight are pre-release (beta) software. See Section 16 regarding data loss and recovery.
 `,
 
   sections: [
@@ -33,17 +42,17 @@ Ziva Meds may allow you to enter information such as:
 • Patient dates of birth, gender, or relationship to you
 • A patient's condition and notes
 • Photos of patients and of medications, if you choose to add them
-• Medication names, generic names, strengths and forms
-• Medication dosages
-• Medication schedules and times
-• Appointment information, including titles, locations and notes
+• Medication names, generic names, strengths, forms and a colour label
+• Medication dosages, schedules and times, including start, end and pause dates
+• For medications taken as needed, the reason they are taken and any limits you set
+• Appointment information, including titles, dates, locations, notes and reminder times
 • Dose history and medication logs
-• Medication inventory information
+• Medication inventory information, such as package size, stock remaining and refill level
 • Notes or other information you choose to enter
 
 Some of this information may constitute personal information, sensitive personal information, or health-related information under applicable law.
 
-You decide what information to enter into the App. The App does not require any particular information in order to function, and you may choose to use initials, nicknames, or other non-identifying labels instead of full names, and to leave photos out.
+You decide what information to enter into the App. The App does not require any particular information in order to function: a patient needs only a name, and you may choose to use initials, nicknames, or other non-identifying labels instead of full names, and to leave photos out.
 `,
     },
     {
@@ -102,7 +111,10 @@ The App also does not collect:
 • Precise location data
 • Advertising or cross-app tracking identifiers
 • Device identifiers transmitted to the developer
-• Usage analytics or crash reports
+• Usage analytics
+• Crash reports, as the App contains no crash-reporting code (see Section 10 regarding crash reports that Apple may share)
+
+The App's privacy manifest, which Apple reviews, declares that the App collects no data types and does not track.
 
 The developer does not intentionally sell, rent, or use information entered into Ziva Meds for advertising purposes.
 
@@ -138,15 +150,18 @@ Correspondence is used only to respond to your message and to investigate the is
 In addition to the information you enter, the App stores a small amount of settings and operational data locally on your device using standard Apple storage mechanisms:
 
 • Whether you have completed the introductory setup screens
-• Your settings, such as appearance, app icon, notification preferences, whether names are hidden in alerts, and whether App Lock is on
-• Recent search terms you have entered in the App, so they can be offered again
+• Your settings: appearance, app icon, notification preferences (the Lock Screen countdown length, the follow-up pause and repeat count for unanswered alarms, and whether low-stock and appointment reminders are on), whether names are hidden in alerts, and whether App Lock is on
+• Your ten most recent search terms, so they can be offered again
 • Dose actions you take from a notification, alarm or Live Activity (which schedule, whether it was taken or skipped, and when), held until the App next opens and records them in its database
-• Active snooze timers
+• Active snooze timers: which doses they cover and when they will ring
 • The date of your last backup
-• A small file listing the medication and patient names of the alarms currently set, so the App can show them while an alarm rings. It is kept in the App's private storage, excluded from device backups, and rebuilt from the database at every launch.
+• A small file describing each alarm currently set (its medication and patient names, dose and time), so the App can show them while an alarm rings. It is kept in the App's private storage, readable only after the device has been unlocked once since restarting, excluded from device backups, and rebuilt from the database at every launch.
 • The location of a set-aside database copy, until the App has told you about it (see Section 16)
+• One-time housekeeping flags, such as whether an internal data repair has already run
 
 Recent search terms may contain text you typed, which could include names or medication names. All of this data remains on your device, is not transmitted to the developer, and is removed when you delete the App.
+
+The App also writes diagnostic messages to the iOS system log on your device, as most apps do. Anything that could identify a patient or medication is marked private in those messages, so iOS redacts it outside a developer's debugging session. These messages are not sent to the developer.
 
 This operational data is not used for analytics, profiling, or advertising.
 `,
@@ -156,17 +171,23 @@ This operational data is not used for analytics, profiling, or advertising.
       body: `
 The App uses the following device features only when you choose the corresponding action. Each is provided by iOS, and iOS asks for your permission where one is required.
 
-Camera. If you choose "Take Photo" for a patient, the App opens the iOS camera to take a single photo. The App does not record video or audio, and the camera is in use only while the capture screen is open. The photo is stored inside the App's database.
+Camera. If you choose "Take Photo" for a patient, the App opens the iOS camera (front camera first) to take a single photo. The App does not record video or audio, does not read your camera roll, and the camera is in use only while the capture screen is open. The photo is stored inside the App's database. Medication photos cannot be taken with the camera; they come from the photo picker.
 
-Photo library. If you choose a photo from your library for a patient or a medication, the App uses Apple's photo picker, a system interface that runs outside the App. The App receives only the photo you select and has no access to the rest of your library.
+Photo library. If you choose a photo from your library for a patient or a medication, the App uses Apple's photo picker, a system interface that runs outside the App. The App receives only the photo you select and has no access to the rest of your library, so it never needs to ask for photo library permission. The Permissions list in Settings › Data & Privacy shows the current iOS status for information only.
 
-On-device photo processing. When you add a patient photo, the App can separate the person from the background so the photo fits the profile style. This uses Apple's Vision framework entirely on your device. It does not identify faces, does not create a facial template, and nothing is sent anywhere.
+On-device photo processing. When you add a patient photo, the App can separate the person from the background so the photo fits the profile style. This uses Apple's Vision framework entirely on your device. It does not identify faces, does not create a facial template, and nothing is sent anywhere. The photo is reduced in size before processing, and the version saved in the database is a 600-pixel square of the framing you chose.
 
-App Lock. App Lock is an optional setting in Settings › Data & Privacy. When it is on, the App asks iOS to confirm Face ID, Touch ID, Optic ID or your device passcode each time the App returns to the foreground, and covers the interface in the app switcher. The App receives only a success or failure from iOS; it never sees or stores biometric data. App Lock is a privacy screen over the interface. Your data is protected by iOS Data Protection regardless, and alarms continue to ring while the App is locked.
+Privacy cover. Whenever the App is not in the foreground, it covers its interface, so the snapshot shown in the app switcher reveals no patient or medication details. This happens regardless of the App Lock setting.
 
-Calendar. "Add to Calendar" on an appointment opens Apple's event editor pre-filled with the appointment's title, time, location, notes and reminder. Nothing is written to your calendar unless you tap Add, and the App does not read your calendar.
+App Lock. App Lock is an optional setting in Settings › Data & Privacy. When it is on, the App asks iOS to confirm Face ID, Touch ID, Optic ID or your device passcode each time the App returns to the foreground, and when you turn the setting on or off. The App receives only a success or failure from iOS; it never sees or stores biometric data. App Lock is a privacy screen over the interface. Your data is protected by iOS Data Protection regardless, and alarms continue to ring while the App is locked. App Lock is unavailable on a device without a passcode.
+
+Calendar. "Add to Calendar" on an appointment opens Apple's event editor pre-filled with the appointment's title, time, a 30-minute duration, location, notes and reminder. Nothing is written to your calendar unless you tap Add, and the App does not read your calendar or ask for calendar permission.
 
 Maps. Tapping an appointment's location opens the Apple Maps app with that address as a search. From that point the address is handled by Apple Maps under Apple's privacy policy.
+
+iOS Settings. Some rows in the App's Settings open the Settings app on your device, for example to change notification permission or text size. The App only opens the page; it does not read or change system settings itself.
+
+Web browser. Settings › Legal › Privacy Policy on the Web opens this Privacy Policy on the developer's website in your browser. That website sets no cookies and runs no analytics; it stores only your chosen theme and language in your browser. Like any website, it is served by a hosting provider that may keep ordinary server logs.
 
 Notifications, alarms and Live Activities are described in Section 12.
 `,
@@ -176,17 +197,17 @@ Notifications, alarms and Live Activities are described in Section 12.
       body: `
 Settings › Data & Privacy and several other screens let you take a copy of your information out of the App. These actions happen only when you choose them. The developer does not receive the files; you decide where they go.
 
-Backup file. "Back Up Now" creates a single file containing everything in the App: every patient, including photos, and every medication, schedule, dose record, inventory record and appointment. You choose where to save it using the iOS Files interface, which may include iCloud Drive or another storage provider you have set up. Before saving, the App offers to protect the file with a passphrase. With a passphrase, the file is encrypted on your device (AES-256-GCM, with the key derived from your passphrase using PBKDF2) and can be opened only with that passphrase. The passphrase is never stored and cannot be recovered. Without a passphrase, the backup is a plain, readable file: anyone who obtains it can read everything in it.
+Backup file. "Create Backup" produces a single JSON file, named "Ziva Meds Backup" with the date, containing everything in the App's database: every patient, including photos, and every medication, including photos, schedule, dose record, inventory record and appointment. Your settings are not included. You choose where to save it using the iOS Files interface, which may include iCloud Drive or another storage provider you have set up. Before saving, the App asks "Protect this backup?". With "Add Passphrase…", you choose a passphrase of at least eight characters and the file is encrypted on your device (AES-256-GCM, with the key derived from your passphrase using PBKDF2-HMAC-SHA256 at 600,000 rounds); it can then be opened only with that passphrase. The passphrase is never stored and cannot be recovered. With "Save Without Passphrase", the backup is a plain, readable file: anyone who obtains it can read everything in it.
 
-Restore. "Restore from Backup" reads a backup file you select and adds its contents to the App. Patients already on the device are left unchanged.
+Restore. "Restore from Backup" reads a backup file you select and adds its contents to the App. An encrypted backup asks for its passphrase first. Patients and appointments already on the device are left unchanged. The App reads the file only on your device.
 
-CSV export. "Export All Data" creates four spreadsheet files (patients, medications, dose log and appointments) containing names, dates of birth, conditions, notes, medication details and dose history, and offers them through the iOS share sheet.
+CSV export. "Export All Data" creates four spreadsheet files and offers them through the iOS share sheet: patients (name, date of birth, gender, relationship, condition, notes), medications (patient, names, strength, form, schedule times, start and end dates, stock, notes), dose log (patient, medication, scheduled and logged times, status) and appointments (patient, title, date, location, reminder, notes). Photos are not included.
 
-PDF report. "Export Adherence Report" and "Share with a Doctor" create a PDF for one patient over a period you choose. It includes the patient's name, relationship, date of birth, condition and notes, each medication with its adherence percentage and notes, and the dose log for the period. You can share it or save it.
+PDF report. "Export Adherence Report" and "Share with a Doctor" in Settings › Data & Privacy, and "Export PDF" or "Share report" on a patient's Report screen, open a Report Preview for one patient over a period you choose. The report always includes the patient's name, relationship (when one is set), date of birth, the period, the number of medications, adherence totals, and each medication's name with its adherence percentage. "Include dose log", on by default, adds the date, time and status of each dose in the period. "Include notes", off by default, adds the patient's condition and notes and each medication's notes. You can review every page before sharing the PDF or saving it to Files. Photos are not included.
 
-Text sharing. A medication's dose history and an appointment can be shared as plain text, including the patient's name.
+Text sharing. A medication's dose history ("Export history") can be shared as plain text listing the medication, the patient's name and each dose's date, time and status. An appointment can be shared as plain text including its title, the patient's name, date, location and notes.
 
-Temporary files. CSV and PDF files are written to a temporary folder with the strongest iOS file protection and are deleted as soon as the share sheet closes, and again at every launch.
+Temporary files. CSV and PDF files are written to a temporary folder with the strongest iOS file protection. CSV files are deleted as soon as the share sheet closes, the PDF when you leave the Report Preview, and anything left over is deleted at every launch.
 
 Once you hand a file or text to another app or service, such as Mail, Messages, AirDrop, a cloud drive, or a messaging app used by a clinic, that app's or service's privacy policy applies. The developer has no access to it and cannot retrieve or delete it.
 `,
@@ -214,12 +235,14 @@ Ziva Meds operates on Apple's platforms and may rely on operating-system functio
 • The camera, photo picker, calendar editor and Maps, when you use those features (Section 7)
 • The Files interface and share sheet, when you back up, export or share (Section 8)
 • Device backup functionality
-• App distribution, installation, and update services
+• App distribution, installation, and update services, including TestFlight
 • Other operating-system services necessary for the App to function
 
 These services are controlled by Apple and are subject to Apple's own terms, policies, and privacy practices.
 
 The developer does not control how Apple operates its operating systems or system-level services, and does not receive information from Apple about your individual use of the App.
+
+Crash reports. The App contains no crash-reporting code. If you have chosen in iOS Settings › Privacy & Security › Analytics & Improvements to share analytics with app developers, Apple may make anonymised crash reports available to the developer through Apple's developer tools. Whether this happens is controlled by Apple and by your settings, not by the App. TestFlight testers can also choose to send feedback and crash details through TestFlight, which is operated by Apple.
 
 You should review Apple's current privacy documentation and your device settings to understand how Apple handles information.
 `,
@@ -229,7 +252,7 @@ You should review Apple's current privacy documentation and your device settings
       body: `
 Depending on your device configuration, Apple may include Ziva Meds data in device backup functionality, including backups stored in iCloud or on a computer.
 
-This means that information you enter into the App, including photos and your settings, may exist in locations other than the physical device, including servers operated by Apple, if you have enabled backups. The alarm names file described in Section 6 is excluded from device backups.
+This means that information you enter into the App, including photos and your settings, may exist in locations other than the physical device, including servers operated by Apple, if you have enabled backups. The alarm file described in Section 6 and the temporary export files described in Section 8 are excluded from device backups.
 
 Backups are created and controlled by Apple's systems and by your own device settings. They are not created, accessed, controlled, or managed by the developer, and the developer cannot view, retrieve, or delete them.
 
@@ -241,7 +264,9 @@ Information contained in a device backup is subject to Apple's terms and privacy
     {
       title: "12. Notifications, Alarms and Live Activities",
       body: `
-Ziva Meds may use Apple's local notification, alarm and Live Activity functionality to remind you about scheduled events. These reminders are generated on your device and are not delivered through a server operated by the developer. Actions you take on them, such as Taken, Snooze or Skip, are processed on your device.
+Ziva Meds may use Apple's local notification, alarm and Live Activity functionality to remind you about scheduled events: dose reminders (as a notification or a system alarm, chosen per schedule), a Lock Screen countdown before a dose and during a snooze, early "Upcoming Medication" notices, low-stock reminders, and appointment reminders. These reminders are generated on your device and are not delivered through a server operated by the developer. Actions you take on them, such as Take, Snooze or Skip, are processed on your device.
+
+The text of each reminder is handed to iOS when it is scheduled and held by iOS until it is shown. When you change the settings that affect that text, the App rebuilds its pending reminders; an alarm that is counting down or ringing at that moment keeps its current wording until its next occurrence.
 
 Notifications and alarms are generated through the operating system and may be affected by your device settings, including:
 
@@ -257,7 +282,7 @@ The developer does not control how Apple's operating system schedules, delivers,
 
 You are responsible for reviewing and configuring your device's notification, alarm, and privacy settings, and for confirming that reminders behave as you expect before relying on them.
 
-By default, alerts shown outside the App do not include the name of the person or of the medication: they read "Medication reminder" or "Medication" together with the time and dose. You can turn this off in Settings › Notifications › Hide names in alerts, in which case notifications, alarms and Live Activities will display the person's name and the medication name, including on a locked screen or a connected device such as a watch or vehicle display. Consider whether displaying such information is appropriate for you and configure your preview settings accordingly.
+By default, alerts shown outside the App do not include the name of the person, the medication, or an appointment's title and location. They read, for example, "Medication reminder" with the time and dose, "A dose is due in 30 minutes", "A medication has about 5 days remaining", or "An appointment is coming up". You can turn this off in Settings › Notifications › Hide names in alerts, in which case notifications, alarms, the Lock Screen countdown and the Dynamic Island will display the person's name, the medication name, and appointment titles and locations, including on a locked screen or a connected device such as a watch or vehicle display. If you use Siri's Announce Notifications feature, iOS may read these alerts aloud. Consider whether displaying such information is appropriate for you and configure your preview settings accordingly. The in-app alarm screen and the Home screen always show the real names once the App is open.
 `,
     },
     {
@@ -300,8 +325,9 @@ Because information entered into Ziva Meds is stored locally on your device, the
 Retention is determined by you:
 
 • Information you enter remains on your device until you delete it in the App, use "Delete All Data", or delete the App.
-• "Delete All Data" in Settings › Data & Privacy removes every patient, medication, schedule, dose record, inventory record and appointment, including photos, cancels all reminders, and removes any set-aside database copy (Section 16).
-• Your settings, recent search terms and the other operational data in Section 6 remain until you delete the App.
+• Deleting a patient removes that patient together with their medications, schedules, dose history and appointments, and cancels their reminders. "Archive Instead" hides the patient and silences their reminders but keeps their information on the device until you delete them or use "Delete All Data".
+• "Delete All Data" in Settings › Data & Privacy removes every patient, medication, schedule, dose record, inventory record and appointment, including photos, cancels all reminders, and removes any set-aside database copy (Section 16). Backup files you saved in Files are not affected.
+• Your settings, recent search terms and the other operational data in Section 6 remain until you delete the App. Recent searches can also be cleared from the Search screen.
 • Temporary export files are deleted after sharing (Section 8). Backups and exports you saved or sent elsewhere are under your control.
 • Email correspondence you send to the developer is retained only as long as reasonably necessary to respond to it.
 
@@ -313,7 +339,7 @@ The developer cannot delete information from backups or systems controlled by Ap
     {
       title: "16. Data Loss, Corruption and Recovery",
       body: `
-Ziva Meds is currently distributed as beta software and remains under active development.
+Ziva Meds remains under active development, and versions obtained through Apple's TestFlight are pre-release software.
 
 Information stored locally by the App may be lost, corrupted, or become unreadable for reasons including:
 
@@ -358,7 +384,7 @@ This does not include:
     {
       title: "18. Third-Party Services",
       body: `
-The App is designed not to use third-party analytics, advertising, crash-reporting, or behavioral tracking services, and does not include third-party software development kits for those purposes. The App makes no network connections of its own.
+The App is built only with Apple's own frameworks. It includes no third-party code libraries or software development kits, and no third-party analytics, advertising, crash-reporting, or behavioral tracking services. The App makes no network connections of its own.
 
 The App does not contain in-app purchases, subscriptions, or advertising.
 
