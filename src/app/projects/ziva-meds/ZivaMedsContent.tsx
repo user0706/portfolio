@@ -705,8 +705,31 @@ const swatches = [
   { name: "Peach", tint: Z.peachTint, ink: Z.peachInk, note: "needs attention" },
 ];
 
-const icons = [
-  { file: "AppIcon.png", name: "Default" },
+/** The default app icon, drawn from the real logo: AppLogo.svg at 85 % of a
+    light tile, the same layering as the icon in the app bundle. */
+function LogoTile({ label, className = "" }: { label: string; className?: string }) {
+  return (
+    <span
+      role="img"
+      aria-label={label}
+      className={`grid aspect-square place-items-center overflow-hidden ${className}`}
+      style={{ background: "linear-gradient(180deg, #ffffff 0%, #eceef0 100%)" }}
+    >
+      <Image
+        src="/projects/ziva/AppLogo.svg"
+        alt=""
+        width={96}
+        height={96}
+        className="h-auto w-[85%]"
+        style={{ filter: "drop-shadow(0 1px 2px rgba(31, 79, 104, 0.28))" }}
+        aria-hidden
+      />
+    </span>
+  );
+}
+
+const icons: { file?: string; name: string }[] = [
+  { name: "Default" },
   { file: "AppIcon-Mint.png", name: "Mint" },
   { file: "AppIcon-Dark.png", name: "Dark" },
   { file: "AppIcon-Mono.png", name: "Mono" },
@@ -809,13 +832,20 @@ function Design() {
               <div className="mt-6 grid grid-cols-4 gap-3">
                 {icons.map((ic) => (
                   <div key={ic.name} className="flex flex-col items-center gap-2">
-                    <Image
-                      src={`/projects/ziva/${ic.file}`}
-                      alt={`${ic.name} app icon`}
-                      width={80}
-                      height={80}
-                      className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
-                    />
+                    {ic.file ? (
+                      <Image
+                        src={`/projects/ziva/${ic.file}`}
+                        alt={`${ic.name} app icon`}
+                        width={80}
+                        height={80}
+                        className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
+                      />
+                    ) : (
+                      <LogoTile
+                        label={`${ic.name} app icon`}
+                        className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
+                      />
+                    )}
                     <span className="text-[0.75rem] font-medium" style={{ color: Z.secondary }}>
                       {ic.name}
                     </span>
@@ -1085,12 +1115,9 @@ function Closing() {
     <section className="ziva-hero py-28 md:py-36">
       <div className="mx-auto max-w-3xl px-5 text-center">
         <Reveal>
-          <Image
-            src="/projects/ziva/AppIcon.png"
-            alt="Ziva Meds app icon"
-            width={112}
-            height={112}
-            className="mx-auto rounded-[26px] shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)]"
+          <LogoTile
+            label="Ziva Meds app icon"
+            className="mx-auto w-[112px] rounded-[26px] shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)]"
           />
           <Headline size="lg" sub="Remembering shouldn’t be." className="!mt-9">
             Caring is hard enough.
