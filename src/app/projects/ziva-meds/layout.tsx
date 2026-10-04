@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: "Ziva Meds — Medication management for caregivers",
     description,
     type: "website",
-    images: [{ url: "/projects/ziva/AppIcon.png", width: 1024, height: 1024 }],
+    images: [{ url: "/projects/ziva/og-image.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
   },
 };
 

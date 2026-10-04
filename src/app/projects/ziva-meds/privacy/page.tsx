@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description,
     type: "article",
     url: "/projects/ziva-meds/privacy",
-    images: [{ url: "/projects/ziva/AppIcon.png", width: 1024, height: 1024 }],
+    images: [{ url: "/projects/ziva/og-image.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
   },
   robots: { index: true, follow: true },
 };
