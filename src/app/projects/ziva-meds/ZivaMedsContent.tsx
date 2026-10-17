@@ -182,7 +182,7 @@ function Nav() {
     <header className="fixed top-0 inset-x-0 z-50 ziva-nav" data-scrolled={scrolled}>
       <div className="mx-auto max-w-6xl px-5 h-12 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5 shrink-0">
-          <Image src="/projects/ziva/AppLogo.svg" alt="" width={20} height={20} aria-hidden />
+          <Image src="/projects/ziva/ziva-mark.png" alt="" width={20} height={20} aria-hidden />
           <span className="text-[0.8125rem] font-semibold tracking-tight" style={{ color: Z.ink }}>
             Ziva Meds
           </span>
@@ -246,7 +246,7 @@ function Hero() {
           className="inline-block"
         >
           <Image
-            src="/projects/ziva/AppLogo.svg"
+            src="/projects/ziva/ziva-mark.png"
             alt="Ziva Meds logo"
             width={100}
             height={100}
@@ -705,34 +705,12 @@ const swatches = [
   { name: "Peach", tint: Z.peachTint, ink: Z.peachInk, note: "needs attention" },
 ];
 
-/** The default app icon, drawn from the real logo: AppLogo.svg at 85 % of a
-    light tile, the same layering as the icon in the app bundle. */
-function LogoTile({ label, className = "" }: { label: string; className?: string }) {
-  return (
-    <span
-      role="img"
-      aria-label={label}
-      className={`grid aspect-square place-items-center overflow-hidden ${className}`}
-      style={{ background: "linear-gradient(180deg, #ffffff 0%, #eceef0 100%)" }}
-    >
-      <Image
-        src="/projects/ziva/AppLogo.svg"
-        alt=""
-        width={96}
-        height={96}
-        className="h-auto w-[85%]"
-        style={{ filter: "drop-shadow(0 1px 2px rgba(31, 79, 104, 0.28))" }}
-        aria-hidden
-      />
-    </span>
-  );
-}
-
-const icons: { file?: string; name: string }[] = [
-  { name: "Default" },
-  { file: "AppIcon-Mint.png", name: "Mint" },
-  { file: "AppIcon-Dark.png", name: "Dark" },
-  { file: "AppIcon-Mono.png", name: "Mono" },
+/** The four app icons, copied from the app's asset catalogs at 320 px. */
+const icons: { file: string; name: string }[] = [
+  { file: "icon-default.png", name: "Default" },
+  { file: "icon-mint.png", name: "Mint" },
+  { file: "icon-dark.png", name: "Dark" },
+  { file: "icon-mono.png", name: "Mono" },
 ];
 
 function Design() {
@@ -832,20 +810,13 @@ function Design() {
               <div className="mt-6 grid grid-cols-4 gap-3">
                 {icons.map((ic) => (
                   <div key={ic.name} className="flex flex-col items-center gap-2">
-                    {ic.file ? (
-                      <Image
-                        src={`/projects/ziva/${ic.file}`}
-                        alt={`${ic.name} app icon`}
-                        width={80}
-                        height={80}
-                        className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
-                      />
-                    ) : (
-                      <LogoTile
-                        label={`${ic.name} app icon`}
-                        className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
-                      />
-                    )}
+                    <Image
+                      src={`/projects/ziva/${ic.file}`}
+                      alt={`${ic.name} app icon`}
+                      width={80}
+                      height={80}
+                      className="w-full max-w-[80px] rounded-[22%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]"
+                    />
                     <span className="text-[0.75rem] font-medium" style={{ color: Z.secondary }}>
                       {ic.name}
                     </span>
@@ -1115,8 +1086,11 @@ function Closing() {
     <section className="ziva-hero py-28 md:py-36">
       <div className="mx-auto max-w-3xl px-5 text-center">
         <Reveal>
-          <LogoTile
-            label="Ziva Meds app icon"
+          <Image
+            src="/projects/ziva/icon-default.png"
+            alt="Ziva Meds app icon"
+            width={112}
+            height={112}
             className="mx-auto w-[112px] rounded-[26px] shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)]"
           />
           <Headline size="lg" sub="Remembering shouldn’t be." className="!mt-9">
@@ -1148,7 +1122,7 @@ function Footer() {
     <footer className="py-9" style={{ borderTop: `1px solid ${Z.divider}` }}>
       <div className="ziva-small mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-[0.75rem] sm:flex-row" style={{ color: Z.placeholder }}>
         <div className="flex items-center gap-2.5">
-          <Image src="/projects/ziva/AppLogo.svg" alt="" width={18} height={18} aria-hidden />
+          <Image src="/projects/ziva/ziva-mark.png" alt="" width={18} height={18} aria-hidden />
           <span>Ziva Meds · 1.3 Beta · iOS 26.1 or later</span>
         </div>
         <div className="flex items-center gap-4">

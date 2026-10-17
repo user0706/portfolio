@@ -1250,7 +1250,7 @@ function AppMark({ size }: { size: number }) {
       style={{ width: size, height: size, borderRadius: size * 0.26 }}
       aria-hidden
     >
-      <Image src="/projects/ziva/AppLogo.svg" alt="" width={Math.round(size * 0.66)} height={Math.round(size * 0.66)} />
+      <Image src="/projects/ziva/ziva-mark.png" alt="" width={Math.round(size * 0.66)} height={Math.round(size * 0.66)} />
     </span>
   );
 }
@@ -1358,7 +1358,7 @@ export function LockScreenActivity() {
 export function IslandCompact() {
   return (
     <div className="ziva-di flex items-center justify-between rounded-full pl-2 pr-3" style={{ width: 150, height: 34 }}>
-      <Image src="/projects/ziva/AppLogo.svg" alt="" width={18} height={18} aria-hidden />
+      <Image src="/projects/ziva/ziva-mark.png" alt="" width={18} height={18} aria-hidden />
       <span className="text-[12px] font-semibold tabular-nums" style={{ color: LA.countdown }}>
         4:52
       </span>
@@ -1473,7 +1473,7 @@ export function AlarmRingingScreen() {
 export function AppLockScreen() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-5 text-center">
-      <Image src="/projects/ziva/AppLogo.svg" alt="" width={46} height={46} aria-hidden />
+      <Image src="/projects/ziva/ziva-mark.png" alt="" width={46} height={46} aria-hidden />
       <p className="mt-4 text-[15px] font-semibold" style={{ color: Z.ink, letterSpacing: "-0.03em" }}>
         Ziva Meds is locked
       </p>

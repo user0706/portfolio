@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description,
     type: "article",
     url: "/projects/ziva-meds/privacy",
-    images: [{ url: "/projects/ziva/og-image.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
+    images: [{ url: "/projects/ziva/og.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
   },
   robots: { index: true, follow: true },
 };
@@ -33,7 +33,7 @@ export default function ZivaMedsPrivacyPage() {
       >
         <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 px-5">
           <Link href="/projects/ziva-meds" className="flex items-center gap-2.5" style={{ color: Z.ink }}>
-            <Image src="/projects/ziva/AppLogo.svg" alt="" width={20} height={20} aria-hidden />
+            <Image src="/projects/ziva/ziva-mark.png" alt="" width={20} height={20} aria-hidden />
             <span className="text-[0.8125rem] font-semibold tracking-tight">{appName}</span>
           </Link>
           <Link
@@ -95,7 +95,7 @@ export default function ZivaMedsPrivacyPage() {
           style={{ color: Z.placeholder }}
         >
           <div className="flex items-center gap-2.5">
-            <Image src="/projects/ziva/AppLogo.svg" alt="" width={18} height={18} aria-hidden />
+            <Image src="/projects/ziva/ziva-mark.png" alt="" width={18} height={18} aria-hidden />
             <span>{appName} · Privacy Policy</span>
           </div>
           <div className="flex items-center gap-4">

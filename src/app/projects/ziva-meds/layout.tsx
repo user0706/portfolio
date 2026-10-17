@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     "caregiver",
   ],
   icons: {
-    icon: "/projects/ziva/AppIcon.svg",
+    icon: "/projects/ziva/favicon.png",
   },
   openGraph: {
     title: "Ziva Meds — Medication management for caregivers",
     description,
     type: "website",
-    images: [{ url: "/projects/ziva/og-image.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
+    images: [{ url: "/projects/ziva/og.png", width: 2400, height: 1260, alt: "Ziva Meds app icon" }],
   },
 };
 
