@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -55,6 +56,8 @@ export const Z = {
   chartMint: "var(--z-chart-mint)",
   sky: "var(--z-sky)",
   appointment: "var(--z-appointment)",
+  missedMark: "var(--z-missed-mark)",
+  skippedMark: "var(--z-skipped-mark)",
 } as const;
 
 /** ZMotion.reveal — the first fill of a bar or chart as it comes on screen. */
@@ -277,7 +280,7 @@ function Eyebrow({ children, color }: { children: ReactNode; color?: string }) {
 
 /** Cut-out portraits, keyed by patient. Others fall back to an initial on their tint. */
 const PHOTOS: Record<string, string> = {
-  Robert: "/projects/ziva/robert.png",
+  Marko: "/projects/ziva/marko.png",
 };
 
 export function Avatar({
@@ -318,9 +321,9 @@ export function Avatar({
 function AvatarStack() {
   return (
     <span className="flex items-center" aria-hidden>
-      <Avatar name="Marko" tint="mint" size={26} />
+      <Avatar name="Robert" tint="mint" size={26} />
       <span className="-ml-2 inline-flex rounded-full" style={{ boxShadow: `0 0 0 2px ${Z.card}` }}>
-        <Avatar name="Robert" tint="sky" size={26} />
+        <Avatar name="Marko" tint="sky" size={26} />
       </span>
     </span>
   );
@@ -474,6 +477,87 @@ export function DisplayNumber({
   );
 }
 
+/* --------------------------------------------------------------------------
+   Adherence dots (ZDayDot, HomeDoseDot)
+   -------------------------------------------------------------------------- */
+
+export type DayOutcome = { taken: number; skipped: number; missed: number; total: number };
+
+/** Mint at this opacity is the "some taken" remainder, as on the Full Report's gauge. */
+const PARTIAL_MINT = "color-mix(in srgb, var(--z-chart-mint) 32%, transparent)";
+
+/** One day on an adherence strip: mint when every due dose was taken, part mint
+    for the share taken, peach for a day with a miss, grey for only skips, track
+    when nothing came due. Today is drawn as a ring. */
+export function DayDot({ outcome, today = false, size = 9 }: { outcome: DayOutcome; today?: boolean; size?: number }) {
+  const share = outcome.total === 0 ? 0 : outcome.taken / outcome.total;
+  let base: string;
+  if (outcome.total === 0) base = today ? Z.card : Z.track;
+  else if (share === 1) base = today ? PARTIAL_MINT : Z.chartMint;
+  else if (share > 0) base = PARTIAL_MINT;
+  else base = outcome.missed > 0 ? Z.missedMark : Z.skippedMark;
+  const ring = Math.max(1.3, size * 0.14);
+  return (
+    <span
+      className="relative inline-block shrink-0 rounded-full overflow-hidden"
+      style={{ width: size, height: size, background: base }}
+      aria-hidden
+    >
+      {share > 0 && share < 1 && (
+        // The taken share fills in from the left, like the report's bars.
+        <span className="absolute inset-y-0 left-0" style={{ width: Math.max(size * share, 2), background: Z.chartMint }} />
+      )}
+      {today && <span className="absolute inset-0 rounded-full" style={{ boxShadow: `inset 0 0 0 ${ring}px ${Z.ink}` }} />}
+    </span>
+  );
+}
+
+/** Seven day dots, oldest first, today last as the ring. */
+export function WeekDots({ days, size = 9, gap = 5 }: { days: DayOutcome[]; size?: number; gap?: number }) {
+  return (
+    <span className="flex flex-wrap items-center" style={{ gap }} aria-hidden>
+      {days.map((d, i) => (
+        <DayDot key={i} outcome={d} today={i === days.length - 1} size={size} />
+      ))}
+    </span>
+  );
+}
+
+type DoseDotKind = "taken" | "missed" | "skipped" | "due" | "upcoming";
+
+/** One dot per dose scheduled today, in time order: mint once taken, peach when
+    missed, grey for a skip, a darker track while it is due, the plain track while ahead. */
+export function DoseDots({ doses, size = 9, gap = 4 }: { doses: DoseDotKind[]; size?: number; gap?: number }) {
+  const color: Record<DoseDotKind, string> = {
+    taken: Z.chartMint,
+    missed: Z.missedMark,
+    skipped: Z.skippedMark,
+    due: Z.pendingRing,
+    upcoming: Z.track,
+  };
+  return (
+    <span className="flex flex-wrap items-center" style={{ gap }} aria-hidden>
+      {doses.map((d, i) => (
+        <span key={i} className="inline-block shrink-0 rounded-full" style={{ width: size, height: size, background: color[d] }} />
+      ))}
+    </span>
+  );
+}
+
+/** The week behind the Home and design-section cards, across both patients. */
+export const WEEK: DayOutcome[] = [
+  { taken: 8, skipped: 0, missed: 0, total: 8 },
+  { taken: 8, skipped: 0, missed: 0, total: 8 },
+  { taken: 7, skipped: 1, missed: 0, total: 8 },
+  { taken: 8, skipped: 0, missed: 0, total: 8 },
+  { taken: 8, skipped: 0, missed: 0, total: 8 },
+  { taken: 8, skipped: 0, missed: 0, total: 8 },
+  { taken: 3, skipped: 0, missed: 0, total: 3 },
+];
+
+/** Today's eight doses in time order: three taken, one due now, four ahead. */
+export const TODAY_DOSES: DoseDotKind[] = ["taken", "taken", "taken", "due", "upcoming", "upcoming", "upcoming", "upcoming"];
+
 function MedTile({
   Icon,
   size = 24,
@@ -577,7 +661,7 @@ function Slot({
   );
 }
 
-/** The native context menu a long press on a dose row opens: "Herbal Tea · Robert · 13:00"
+/** The native context menu a long press on a dose row opens: "Herbal Tea · Marko · 13:00"
     over Take Now, Taken at…, Skip This Dose. */
 function DoseContextMenu() {
   const items = [
@@ -599,7 +683,7 @@ function DoseContextMenu() {
       }}
     >
       <p className="px-3 pt-2 pb-1.5 text-[8px]" style={{ color: Z.secondary }}>
-        Herbal Tea · Robert · 13:00
+        Herbal Tea · Marko · 13:00
       </p>
       {items.map((it, i) => (
         <div key={it.label}>
@@ -647,20 +731,20 @@ export function HomeScreen({ showMenu = false }: { showMenu?: boolean }) {
             </div>
             <AvatarStack />
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-2">
+          <div className="grid grid-cols-2 gap-2.5 mt-3">
             <div>
-              <Eyebrow>Avg. adherence</Eyebrow>
-              <div className="mt-0.5 mb-1">
+              <Eyebrow>Avg. adherence · both</Eyebrow>
+              <div className="mt-1 mb-1.5">
                 <DisplayNumber value="94" suffix="%" size={20} color={Z.chartInk} />
               </div>
-              <Bar value={0.94} height={11} />
+              <WeekDots days={WEEK} />
             </div>
             <div>
               <Eyebrow>Doses today</Eyebrow>
-              <div className="mt-0.5 mb-1">
+              <div className="mt-1 mb-1.5">
                 <DisplayNumber value="3" suffix="/8" size={20} />
               </div>
-              <Bar value={3 / 8} height={11} solid={Z.sky} label="38%" />
+              <DoseDots doses={TODAY_DOSES} />
             </div>
           </div>
         </MockCard>
@@ -682,7 +766,7 @@ export function HomeScreen({ showMenu = false }: { showMenu?: boolean }) {
                 Herbal Tea 50 g
               </p>
               <p className="text-[8.5px] leading-tight mt-[1px]" style={{ color: Z.peachInk }}>
-                0 left · out of stock
+                Out of stock · 0 of 30 left
               </p>
             </div>
             <span
@@ -704,17 +788,17 @@ export function HomeScreen({ showMenu = false }: { showMenu?: boolean }) {
         </div>
 
         <Slot time="08:00" detail="Done">
-          <DoseRow avatar={{ name: "Robert", tint: "sky" }} title="Robert" caption="3 medications" mark="taken" />
+          <DoseRow avatar={{ name: "Marko", tint: "sky" }} title="Marko" caption="3 medications" mark="taken" />
         </Slot>
 
         <Slot time="13:00" detail="Due now" emphasis="due" lifted={showMenu}>
-          <DoseRow avatar={{ name: "Robert", tint: "sky" }} title="Herbal Tea 50 g" caption="Robert · 1 ml" mark="pending" />
+          <DoseRow avatar={{ name: "Marko", tint: "sky" }} title="Herbal Tea 50 g" caption="Marko · 1 ml" mark="pending" />
         </Slot>
 
         <Slot time="20:00" detail="3 medications">
-          <DoseRow avatar={{ name: "Robert", tint: "sky" }} title="Robert" caption="2 medications" mark="pending" />
+          <DoseRow avatar={{ name: "Marko", tint: "sky" }} title="Marko" caption="2 medications" mark="pending" />
           <Divider inset={36} />
-          <DoseRow avatar={{ name: "Marko", tint: "mint" }} title="Vitamin D3 2000 IU" caption="Marko · 1 tablet" mark="pending" />
+          <DoseRow avatar={{ name: "Robert", tint: "mint" }} title="Vitamin D3 2000 IU" caption="Robert · 1 tablet" mark="pending" />
         </Slot>
       </div>
       <GlassTabBar active="home" />
@@ -752,6 +836,10 @@ export function HomeFan() {
    Patients
    -------------------------------------------------------------------------- */
 
+/** PatientsCard's metrics at ×0.64: hero 196 → 125, the cut-out 200 tall from
+    44 down, the 120 pt avatar at 64, the panel inset 8 → 5. */
+const CARD = { hero: 125, photoTop: 28, photoHeight: 128, avatar: 77, avatarTop: 41, inset: 5 };
+
 function PatientCard({
   relationship,
   name,
@@ -760,6 +848,7 @@ function PatientCard({
   todayDone,
   tint,
   adherence,
+  week,
   medications,
 }: {
   relationship: string;
@@ -769,52 +858,64 @@ function PatientCard({
   todayDone: boolean;
   tint: "sky" | "mint";
   adherence: number;
+  week: DayOutcome[];
   medications: number;
 }) {
   const blob = tint === "sky" ? Z.skyTint : Z.mintTint;
   const photo = PHOTOS[name];
+  // The fade begins where the panel starts, so the frame's edge never shows as a line.
+  const fadeStart = ((CARD.hero - CARD.photoTop) / CARD.photoHeight) * 100;
+  const mask = `linear-gradient(to bottom, #000 0%, #000 ${fadeStart.toFixed(1)}%, transparent 100%)`;
   return (
     <div className="relative overflow-hidden rounded-[18px]" style={{ background: Z.card }}>
+      {/* Soft radial glow behind the portrait, centred on the avatar. */}
       <div
-        className="absolute rounded-full"
+        className="absolute left-1/2 -translate-x-1/2 rounded-full"
         style={{
-          width: 128,
-          height: 128,
-          right: -6,
-          top: -6,
-          background: `radial-gradient(circle at 50% 40%, ${blob} 0%, transparent 62%)`,
+          width: 154,
+          height: 154,
+          top: CARD.avatarTop + CARD.avatar / 2 - 77,
+          background: `radial-gradient(circle, ${blob} 0%, transparent 70%)`,
         }}
         aria-hidden
       />
       {photo ? (
-        // Cut-out portrait standing over the tint (PatientsCard: 211 × 212 at right 8 / top 9),
-        // its lower edge hazing into the frosted panel below.
-        <div className="absolute overflow-hidden" style={{ top: 6, right: 5, width: 135, height: 136 }} aria-hidden>
-          <Image
-            src={photo}
-            alt=""
-            width={135}
-            height={136}
-            className="h-full w-full object-cover"
-            style={{ objectPosition: "50% 0%" }}
-          />
+        // Cut-out standing over the glow, as wide as the panel; its shoulders
+        // continue under the panel, which shows them again through its glass.
+        <div
+          className="absolute"
+          style={{
+            top: CARD.photoTop,
+            left: CARD.inset,
+            right: CARD.inset,
+            height: CARD.photoHeight,
+            maskImage: mask,
+            WebkitMaskImage: mask,
+          }}
+          aria-hidden
+        >
+          <Image src={photo} alt="" fill sizes="240px" className="object-contain object-top" />
         </div>
       ) : (
-        <div className="absolute" style={{ top: 14, right: 14 }}>
-          <Avatar name={name} tint={tint} size={76} />
+        // No photo: the tinted initial, centred.
+        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: CARD.avatarTop }}>
+          <Avatar name={name} tint={tint} size={CARD.avatar} />
         </div>
       )}
 
-      <div className="relative" style={{ padding: "14px 0 0 13px", width: 140 }}>
-        <Eyebrow>{relationship}</Eyebrow>
-        <p className="mt-[3px] text-[19px] font-semibold leading-none" style={{ color: Z.ink, letterSpacing: "-0.04em" }}>
-          {name}
-        </p>
-        <p className="mt-[4px] text-[9.5px]" style={{ color: Z.secondary }}>
-          {description}
-        </p>
+      <div className="relative flex items-start justify-between gap-2" style={{ padding: "14px 13px 0", minHeight: CARD.hero }}>
+        <div className="min-w-0">
+          <Eyebrow>{relationship}</Eyebrow>
+          <p className="mt-[3px] text-[19px] font-semibold leading-none" style={{ color: Z.ink, letterSpacing: "-0.04em" }}>
+            {name}
+          </p>
+          <p className="mt-[4px] text-[9.5px]" style={{ color: Z.secondary }}>
+            {description}
+          </p>
+        </div>
+        {/* "✓ 4 of 4 today" in the top-right corner. */}
         <span
-          className="mt-2 inline-flex items-center gap-1.5 rounded-full pl-[4px] pr-2"
+          className="inline-flex shrink-0 items-center gap-1 rounded-full pl-[4px] pr-2"
           style={{ height: 23, background: Z.ground }}
         >
           <Mark kind={todayDone ? "taken" : "pending"} size={15} />
@@ -825,26 +926,27 @@ function PatientCard({
       </div>
 
       <div
-        className="relative m-1 mt-3 rounded-[15px] p-2.5"
+        className="relative rounded-[15px] p-2.5"
         style={{
-          // Lighter tint over a cut-out so more of the photo reads through the blur.
+          margin: CARD.inset,
+          // Frosted glass: the cut-out beneath reads through, blurred and hazed.
           background: photo ? "color-mix(in srgb, var(--z-ground) 58%, transparent)" : Z.material,
-          backdropFilter: "blur(12px) saturate(140%)",
-          WebkitBackdropFilter: "blur(12px) saturate(140%)",
+          backdropFilter: "blur(6px) saturate(140%)",
+          WebkitBackdropFilter: "blur(6px) saturate(140%)",
         }}
       >
         <div className="grid grid-cols-2 gap-2.5">
           <div>
             <Eyebrow>Avg. adherence</Eyebrow>
             <div className="mt-1 mb-1">
-              <DisplayNumber value={`${Math.round(adherence * 100)}`} suffix="%" size={21} color={Z.chartInk} />
+              <DisplayNumber value={`${Math.round(adherence * 100)}`} suffix="%" size={22} color={Z.chartInk} />
             </div>
-            <Bar value={adherence} height={13} />
+            <WeekDots days={week} />
           </div>
           <div>
             <Eyebrow>Medications</Eyebrow>
             <div className="mt-1">
-              <DisplayNumber value={`${medications}`} size={21} />
+              <DisplayNumber value={`${medications}`} size={22} />
             </div>
             <p className="text-[8px] mt-[2px]" style={{ color: Z.secondary }}>
               active this week
@@ -854,13 +956,13 @@ function PatientCard({
         <div className="mt-2.5 grid grid-cols-2 gap-1.5">
           <span
             className="inline-flex items-center justify-center rounded-full text-[9.5px] font-semibold"
-            style={{ height: 27, background: Z.ink, color: Z.onInk }}
+            style={{ height: 29, background: Z.ink, color: Z.onInk }}
           >
             Details
           </span>
           <span
             className="inline-flex items-center justify-center rounded-full text-[9.5px] font-semibold"
-            style={{ height: 27, background: Z.card, color: Z.ink }}
+            style={{ height: 29, background: Z.card, color: Z.ink }}
           >
             Add Med
           </span>
@@ -869,6 +971,23 @@ function PatientCard({
     </div>
   );
 }
+
+/** Marko's week: a skipped dose on Wednesday, today's three taken so far. */
+const MARKO_WEEK: DayOutcome[] = [
+  { taken: 7, skipped: 0, missed: 0, total: 7 },
+  { taken: 7, skipped: 0, missed: 0, total: 7 },
+  { taken: 6, skipped: 1, missed: 0, total: 7 },
+  { taken: 7, skipped: 0, missed: 0, total: 7 },
+  { taken: 7, skipped: 0, missed: 0, total: 7 },
+  { taken: 7, skipped: 0, missed: 0, total: 7 },
+  { taken: 3, skipped: 0, missed: 0, total: 3 },
+];
+
+/** Robert's week: every dose taken, nothing resolved yet today. */
+const ROBERT_WEEK: DayOutcome[] = [
+  ...Array.from({ length: 6 }, () => ({ taken: 1, skipped: 0, missed: 0, total: 1 })),
+  { taken: 0, skipped: 0, missed: 0, total: 0 },
+];
 
 export function PatientsScreen() {
   return (
@@ -886,22 +1005,24 @@ export function PatientsScreen() {
         <div className="space-y-2.5">
           <PatientCard
             relationship="Parent"
-            name="Robert"
+            name="Marko"
             description="Male · 65"
             today="3 of 7 today"
             todayDone={false}
             tint="sky"
             adherence={0.94}
+            week={MARKO_WEEK}
             medications={3}
           />
           <PatientCard
-            relationship="Myself"
-            name="Marko"
+            relationship="You"
+            name="Robert"
             description="Male · 34"
             today="0 of 1 today"
             todayDone={false}
             tint="mint"
             adherence={0.97}
+            week={ROBERT_WEEK}
             medications={1}
           />
         </div>
@@ -912,101 +1033,115 @@ export function PatientsScreen() {
 }
 
 /* --------------------------------------------------------------------------
-   Full Report — Swift Charts
+   Full Report — the adherence gauge
    -------------------------------------------------------------------------- */
 
-const CURRENT = [0.86, 1, 0.75, 1, 1, 0.9, 1];
-const PREVIOUS = [0.7, 0.8, 0.6, 0.9, 0.75, 0.85, 0.8];
-const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+type GaugeBar = { kind: "all" | "some" | "skipped" | "missed" | "empty"; share?: number };
 
-/** Catmull-Rom through the points, as Swift Charts' `.catmullRom` interpolation. */
-function smoothPath(pts: { x: number; y: number }[]) {
-  if (pts.length < 2) return "";
-  let d = `M${pts[0].x},${pts[0].y}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i - 1] ?? pts[i];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[i + 2] ?? p2;
-    const c1x = p1.x + (p2.x - p0.x) / 6;
-    const c1y = p1.y + (p2.y - p0.y) / 6;
-    const c2x = p2.x - (p3.x - p1.x) / 6;
-    const c2y = p2.y - (p3.y - p1.y) / 6;
-    d += ` C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x},${p2.y}`;
-  }
-  return d;
-}
+/** The last seven days, oldest at the left end of the ring. */
+const REPORT_BARS: GaugeBar[] = [
+  { kind: "some", share: 0.75 },
+  { kind: "all" },
+  { kind: "all" },
+  { kind: "all" },
+  { kind: "some", share: 0.8 },
+  { kind: "all" },
+  { kind: "some", share: 0.67 },
+];
 
-export function TrendChart({ width = 200, height = 72 }: { width?: number; height?: number }) {
+/** Adherence the patient is aiming for; drawn as the tick on the gauge. */
+const GOAL = 0.8;
+
+/** ReportAdherenceGauge at ×0.64: a mint arc on the track with the goal tick,
+    and a ring of capsules around it, one per day, oldest at the left end.
+    "Some taken" fills the inner part in mint for the share that was taken. */
+export function Gauge({ value = 0.89, bars = REPORT_BARS, width = 216 }: { value?: number; bars?: GaugeBar[]; width?: number }) {
   const reduce = useReducedMotion();
-  const padX = 8;
-  const top = 8;
-  const bottom = height - 14;
-  const toPoint = (v: number, i: number, n: number) => ({
-    x: Math.round(padX + (i * (width - padX * 2)) / (n - 1)),
-    y: Math.round(bottom - v * (bottom - top)),
-  });
-  const cur = CURRENT.map((v, i) => toPoint(v, i, CURRENT.length));
-  const prev = PREVIOUS.map((v, i) => toPoint(v, i, PREVIOUS.length));
-  const last = cur[cur.length - 1];
+  const uid = useId();
+  const stroke = 5;
+  const gap = 6;
+  const bar = { w: 16, h: 28 };
+  // Breathing room inside the drawing, so the end bars never touch the edge.
+  const inset = 6;
+  const cx = width / 2;
+  const cy = width / 2;
+  // Radius of the arc's stroke centre: the longest bars reach the inset edge.
+  const r = width / 2 - inset - stroke / 2 - gap - bar.h;
+  const height = width / 2 + 13;
+  const ringR = r + stroke / 2 + gap + bar.h / 2;
+  const pt = (radius: number, a: number) => ({ x: cx + radius * Math.cos(a), y: cy - radius * Math.sin(a) });
+  const end = pt(r, Math.PI * (1 - Math.min(Math.max(value, 0), 1)));
+  const g1 = pt(r - 6, Math.PI * (1 - GOAL));
+  const g2 = pt(r + 6, Math.PI * (1 - GOAL));
+  const track = `M${cx - r},${cy} A${r},${r} 0 0 1 ${cx + r},${cy}`;
+  const arc = `M${cx - r},${cy} A${r},${r} 0 0 1 ${end.x.toFixed(2)},${end.y.toFixed(2)}`;
+  const fill: Record<GaugeBar["kind"], string> = {
+    all: Z.chartMint,
+    some: PARTIAL_MINT,
+    skipped: Z.skippedMark,
+    missed: Z.missedMark,
+    empty: Z.track,
+  };
 
   return (
-    <motion.div
+    <motion.svg
+      width="100%"
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden
       initial={reduce ? false : "hidden"}
       whileInView="shown"
       viewport={{ once: true, amount: 0.5 }}
     >
-      <motion.svg
-        width="100%"
-        viewBox={`0 0 ${width} ${height}`}
-        aria-hidden
-        variants={{ hidden: { clipPath: "inset(100% 0% 0% 0%)" }, shown: { clipPath: "inset(0% 0% 0% 0%)" } }}
+      <path d={track} fill="none" stroke={Z.track} strokeWidth={stroke} strokeLinecap="round" />
+      <motion.path
+        d={arc}
+        fill="none"
+        stroke={Z.chartMint}
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        variants={{ hidden: { pathLength: 0 }, shown: { pathLength: 1 } }}
         transition={REVEAL}
-      >
-        <path d={smoothPath(prev)} fill="none" stroke={Z.chartMint} strokeOpacity="0.18" strokeWidth="3.4" strokeLinecap="round" />
-        <path d={smoothPath(cur)} fill="none" stroke={Z.chartMint} strokeWidth="3.4" strokeLinecap="round" />
-        <circle cx={last.x} cy={last.y} r="5" fill="#fff" />
-        <circle cx={last.x} cy={last.y} r="3.2" fill={Z.chartMint} />
-        {DAY_LABELS.map((l, i) => (
-          <text
-            key={l}
-            x={cur[i].x}
-            y={height - 2}
-            textAnchor="middle"
-            fontSize="7"
-            fill={Z.secondary}
-            style={{ fontFamily: "inherit" }}
-          >
-            {l}
-          </text>
-        ))}
-      </motion.svg>
-    </motion.div>
+      />
+      {/* Short radial line across the arc at the goal. */}
+      <line x1={g1.x} y1={g1.y} x2={g2.x} y2={g2.y} stroke={Z.ink} strokeWidth={1.6} strokeLinecap="round" />
+      {bars.map((b, i) => {
+        // Bar angle counter-clockwise from the right: π at the left end (oldest), 0 at the right.
+        const a = bars.length > 1 ? Math.PI - (Math.PI * i) / (bars.length - 1) : Math.PI / 2;
+        const p = pt(ringR, a);
+        const deg = 90 - (a * 180) / Math.PI;
+        const id = `${uid}-bar-${i}`;
+        const fillH = b.kind === "some" ? Math.max(bar.h * (b.share ?? 0), bar.w) : 0;
+        return (
+          // Upright, inner end at the bottom; the outer transform places it, the
+          // inner one grows it in from that end.
+          <g key={i} transform={`translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${deg.toFixed(2)})`}>
+            <motion.g
+              // Motion sets SVG transform origins itself; 0–1 of the bar's box, so this is its inner end.
+              style={{ originX: 0.5, originY: 1 }}
+              variants={{ hidden: { opacity: 0, scale: 0.2 }, shown: { opacity: 1, scale: 1 } }}
+              transition={{ ...REVEAL, delay: 0.08 + i * (0.6 / bars.length) }}
+            >
+              <clipPath id={id}>
+                <rect x={-bar.w / 2} y={-bar.h / 2} width={bar.w} height={bar.h} rx={bar.w / 2} />
+              </clipPath>
+              <rect x={-bar.w / 2} y={-bar.h / 2} width={bar.w} height={bar.h} rx={bar.w / 2} fill={fill[b.kind]} />
+              {fillH > 0 && (
+                <rect clipPath={`url(#${id})`} x={-bar.w / 2} y={bar.h / 2 - fillH} width={bar.w} height={fillH} fill={Z.chartMint} />
+              )}
+            </motion.g>
+          </g>
+        );
+      })}
+    </motion.svg>
   );
 }
 
-function RateBar({ value, delta }: { value: number; delta: string }) {
-  const reduce = useReducedMotion();
+function LegendDot({ color, label }: { color: string; label: string }) {
   return (
-    <div className="relative">
-      <Bar value={value} height={23} />
-      <motion.span
-        className="absolute top-1/2 inline-flex items-center rounded-full px-2 text-[8px] font-bold tabular-nums"
-        style={{
-          right: `calc(${100 - Math.round(value * 100)}% + 3px)`,
-          height: 17,
-          background: Z.ink,
-          color: Z.onInk,
-          translateY: "-50%",
-        }}
-        initial={reduce ? false : { opacity: 0, scale: 0.6 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ ...REVEAL, delay: 0.5 }}
-      >
-        {delta}
-      </motion.span>
-    </div>
+    <span className="inline-flex items-center gap-[3px] text-[7.5px] whitespace-nowrap" style={{ color: Z.secondary }}>
+      <span className="inline-block rounded-full" style={{ width: 5, height: 5, background: color }} />
+      {label}
+    </span>
   );
 }
 
@@ -1027,7 +1162,7 @@ export function ReportScreen() {
             Full Report
           </p>
           <p className="text-[9.5px] mt-[2px]" style={{ color: Z.secondary }}>
-            Robert · all medications
+            Marko · all medications
           </p>
         </div>
 
@@ -1044,44 +1179,51 @@ export function ReportScreen() {
         </div>
 
         <MockCard>
-          <div className="flex items-start justify-between gap-2">
-            <DisplayNumber value="94" suffix="%" size={33} color={Z.chartInk} />
-            <p className="text-right text-[9px] leading-snug" style={{ color: Z.secondary }}>
-              Adherence rate,
-              <br />
-              this period
-            </p>
-          </div>
-          <div className="flex justify-between px-[2px] mt-2 mb-1 text-[7.5px] tabular-nums" style={{ color: Z.secondary }}>
-            <span>0</span>
-            <span>100</span>
-          </div>
-          <RateBar value={0.94} delta="+6%" />
-        </MockCard>
-
-        <MockCard className="mt-2.5">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-[14px] font-semibold leading-tight" style={{ color: Z.ink, letterSpacing: "-0.03em" }}>
-                Avg. Adherence
+          <p className="text-[14px] font-semibold leading-tight" style={{ color: Z.ink, letterSpacing: "-0.03em" }}>
+            Adherence
+          </p>
+          <p className="text-[8.5px] mt-[1px]" style={{ color: Z.secondary }}>
+            Each bar is one day, oldest on the left
+          </p>
+          <div className="relative mt-2 -mx-1">
+            <Gauge />
+            {/* The period total inside the arc: share taken, dose count, change versus
+                the prior period. As in the app, the pill's bottom sits 14 pt (9 px here)
+                below the arc's baseline, which is itself 13 px above the drawing's edge. */}
+            <div className="absolute inset-x-0 flex flex-col items-center" style={{ bottom: 4 }}>
+              <DisplayNumber value="89" suffix="%" size={32} />
+              <p className="text-[8.5px] mt-[2px]" style={{ color: Z.secondary }}>
+                41 of 46 doses
               </p>
-              <p className="text-[8.5px] mt-[2px] truncate" style={{ color: Z.secondary }}>
-                Morning doses are missed most often.
-              </p>
+              <span
+                className="mt-1 inline-flex items-center rounded-full px-2 text-[7.5px] font-bold tabular-nums"
+                style={{ height: 17, background: Z.mintTint, color: Z.mintInk }}
+              >
+                +5% vs. prior 7 days
+              </span>
             </div>
-            <DisplayNumber value="94" suffix="%" size={24} color={Z.chartInk} />
           </div>
-          <div className="mt-1.5 -mx-1">
-            <TrendChart />
+          <div className="mt-2.5 flex items-center justify-center gap-2">
+            <LegendDot color={Z.chartMint} label="All taken" />
+            <LegendDot color={PARTIAL_MINT} label="Some taken" />
+            <LegendDot color={Z.skippedMark} label="Skipped" />
+            <LegendDot color={Z.missedMark} label="Missed" />
           </div>
+          <p className="mt-1 flex items-center justify-center gap-1 text-[7.5px]" style={{ color: Z.secondary }}>
+            <span className="inline-block rounded-[1px]" style={{ width: 2, height: 8, background: Z.ink }} />
+            Goal 80%
+          </p>
+          <p className="mt-2 text-center text-[9px]" style={{ color: Z.secondary }}>
+            Morning doses are missed most often.
+          </p>
         </MockCard>
 
         <MockCard className="mt-2.5 !py-2.5">
           <div className="flex">
             {[
-              { v: "37", l: "Taken", c: Z.chartInk },
+              { v: "41", l: "Taken", c: Z.chartInk },
               { v: "4", l: "Skipped", c: Z.peachInk },
-              { v: "2", l: "Missed", c: Z.ink },
+              { v: "1", l: "Missed", c: Z.ink },
             ].map((s, i) => (
               <div
                 key={s.l}
@@ -1101,9 +1243,11 @@ export function ReportScreen() {
           <p className="text-[13px] font-semibold" style={{ color: Z.ink, letterSpacing: "-0.03em" }}>
             By Medication
           </p>
+          {/* Name and percentage over a solid mint bar; tapping a row narrows the report to it. */}
           {[
-            { n: "Tamsulosin", p: 0.98 },
-            { n: "Finasteride", p: 0.93 },
+            { n: "Finasteride", p: 0.92 },
+            { n: "Tamsulosin", p: 0.9 },
+            { n: "Herbal Tea", p: 0.86 },
           ].map((m, i) => (
             <div key={m.n}>
               {i > 0 && <Divider />}
@@ -1112,7 +1256,7 @@ export function ReportScreen() {
                   <span>{m.n}</span>
                   <span className="tabular-nums">{Math.round(m.p * 100)}%</span>
                 </div>
-                <Bar value={m.p} height={9} />
+                <Bar value={m.p} height={7} solid={Z.chartMint} />
               </div>
             </div>
           ))}
@@ -1173,13 +1317,14 @@ export function CalendarScreen() {
               return (
                 <div key={d} className="flex flex-col items-center gap-[1px]">
                   <span
-                    className="inline-flex items-center justify-center rounded-full text-[8.5px] tabular-nums"
+                    className="inline-flex items-center justify-center rounded-full text-[9px] font-semibold tabular-nums"
                     style={{
-                      width: 19,
-                      height: 19,
+                      width: 21,
+                      height: 21,
                       background: sel ? Z.ink : "transparent",
-                      color: sel ? Z.onInk : d === today ? Z.chartInk : Z.ink,
-                      fontWeight: sel || d === today ? 700 : 500,
+                      color: sel ? Z.onInk : Z.ink,
+                      // Today is a mint ring until it is selected, when the ink circle takes over.
+                      boxShadow: !sel && d === today ? `inset 0 0 0 1.3px ${Z.chartMint}` : undefined,
                     }}
                   >
                     {d}
@@ -1194,22 +1339,23 @@ export function CalendarScreen() {
         <p className="px-1 mt-3 mb-1.5 text-[13px] font-semibold" style={{ color: Z.ink, letterSpacing: "-0.03em" }}>
           Tuesday, 6 October
         </p>
-        {/* Day rows as the app draws them: time, a bar in the status colour
-            (sky = scheduled, mint = taken, orange = appointment), title, caption, chevron. */}
+        {/* Day rows as the app draws them: time, a 4 × 40 bar in the status colour
+            (mint = taken or still ahead, grey = skipped, orange = missed or an
+            appointment), title, caption, chevron. */}
         <div className="rounded-[18px] px-3 py-[2px]" style={{ background: Z.card }}>
           {[
-            { t: "08:00", n: "Herbal Tea · 1 ml", s: "Robert · scheduled", c: Z.sky },
-            { t: "08:00", n: "Finasteride · 1 tablet", s: "Robert · scheduled", c: Z.sky },
-            { t: "09:00", n: "Dermatology check-up", s: "Appointment · Robert", c: Z.appointment },
-            { t: "13:00", n: "Herbal Tea · 1 ml", s: "Robert · scheduled", c: Z.sky },
+            { t: "08:00", n: "Herbal Tea · 1 ml", s: "Marko · scheduled", c: Z.chartMint },
+            { t: "08:00", n: "Finasteride · 1 tablet", s: "Marko · scheduled", c: Z.chartMint },
+            { t: "09:00", n: "Dermatology check-up", s: "Appointment · Marko", c: Z.appointment },
+            { t: "13:00", n: "Herbal Tea · 1 ml", s: "Marko · scheduled", c: Z.chartMint },
           ].map((row, i) => (
             <div key={i}>
-              {i > 0 && <Divider inset={30} />}
-              <div className="flex items-center gap-2.5 py-[7px]">
-                <span className="w-[26px] text-[9px] tabular-nums" style={{ color: Z.secondary }}>
+              {i > 0 && <Divider />}
+              <div className="flex items-center gap-2 py-[7px]">
+                <span className="w-[28px] text-[9px] tabular-nums" style={{ color: Z.secondary }}>
                   {row.t}
                 </span>
-                <span className="shrink-0 rounded-full" style={{ width: 3, height: 22, background: row.c }} />
+                <span className="shrink-0 rounded-[1.5px]" style={{ width: 2.6, height: 26, background: row.c }} />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-semibold truncate leading-tight" style={{ color: Z.ink }}>
                     {row.n}
@@ -1282,7 +1428,7 @@ function ActivityCard({ compact = false }: { compact?: boolean }) {
           <AppMark size={compact ? 26 : 30} />
           <div className="min-w-0">
             <p className="text-[8.5px] font-medium truncate" style={{ color: LA.secondary }}>
-              Due soon · Robert
+              Due soon · Marko
             </p>
             <p className="text-[12px] font-semibold truncate text-white leading-tight">Herbal Tea</p>
           </div>
@@ -1374,7 +1520,7 @@ export function IslandExpanded() {
           <AppMark size={34} />
           <div className="min-w-0">
             <p className="text-[10px] font-medium truncate" style={{ color: LA.secondary }}>
-              Due soon · Robert
+              Due soon · Marko
             </p>
             <p className="text-[14px] font-semibold truncate text-white leading-tight">Herbal Tea</p>
           </div>
@@ -1415,7 +1561,7 @@ function AlarmKitBanner() {
           Ziva Meds
         </p>
         <p className="text-[8.5px] font-semibold truncate" style={{ color: green }}>
-          Herbal Tea · 1 ml — Robert
+          Herbal Tea · 1 ml — Marko
         </p>
       </div>
       <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 28, height: 28, background: "#0f3d22" }}>
@@ -1443,7 +1589,7 @@ export function AlarmRingingScreen() {
           <p className="mt-1.5 text-[14px] font-semibold tabular-nums" style={{ color: Z.chartMint }}>
             1 ml
           </p>
-          <p className="mt-1 text-[10.5px] text-white/65">Robert</p>
+          <p className="mt-1 text-[10.5px] text-white/65">Marko</p>
         </div>
       </div>
       <div className="w-full space-y-1.5">
@@ -1507,34 +1653,34 @@ export function SummaryCardLarge() {
             3 of 8 Doses Taken
           </p>
           <p className="mt-1 text-[15px]" style={{ color: Z.secondary }}>
-            5 to go · next at 13:00
+            Across 2 patients · 1 due now, 4 later
           </p>
         </div>
         <span className="flex items-center">
-          <Avatar name="Marko" tint="mint" size={40} />
+          <Avatar name="Robert" tint="mint" size={40} />
           <span className="-ml-3 inline-flex rounded-full" style={{ boxShadow: `0 0 0 3px ${Z.card}` }}>
-            <Avatar name="Robert" tint="sky" size={40} />
+            <Avatar name="Marko" tint="sky" size={40} />
           </span>
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-5">
+      <div className="grid grid-cols-2 gap-4 mt-6">
         <div>
           <p className="text-[14px] font-medium" style={{ color: Z.secondary }}>
-            Avg. adherence
+            Avg. adherence · both
           </p>
-          <div className="mt-2 mb-2">
+          <div className="mt-2 mb-3">
             <DisplayNumber value="94" suffix="%" size={44} color={Z.chartInk} />
           </div>
-          <Bar value={0.94} height={26} />
+          <WeekDots days={WEEK} size={18} gap={10} />
         </div>
         <div>
           <p className="text-[14px] font-medium" style={{ color: Z.secondary }}>
             Doses today
           </p>
-          <div className="mt-2 mb-2">
+          <div className="mt-2 mb-3">
             <DisplayNumber value="3" suffix="/8" size={44} />
           </div>
-          <Bar value={3 / 8} height={26} solid={Z.sky} label="38%" labelSize={12} />
+          <DoseDots doses={TODAY_DOSES} size={18} gap={8} />
         </div>
       </div>
       <div className="mt-5 flex items-center gap-3 rounded-[20px] p-3" style={{ background: Z.peachTint }}>
@@ -1546,7 +1692,7 @@ export function SummaryCardLarge() {
             Herbal Tea 50 g
           </p>
           <p className="text-[13px]" style={{ color: Z.peachInk }}>
-            0 left · out of stock
+            Out of stock · 0 of 30 left
           </p>
         </div>
         <span className="inline-flex items-center rounded-full px-4 text-[13px] font-semibold" style={{ height: 34, background: Z.card, color: Z.ink }}>

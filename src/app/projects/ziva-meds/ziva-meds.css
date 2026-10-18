@@ -35,6 +35,8 @@
   --z-peach-ink: #f0a07e;
   --z-chart-ink: #5fd6bc;
   --z-destructive: #ff6b61;
+  --z-missed-mark: #e8906a;
+  --z-skipped-mark: rgba(255, 255, 255, 0.24);
 
   --z-lg-bg: rgba(28, 30, 35, 0.42);
   --z-lg-highlight: rgba(255, 255, 255, 0.28);
@@ -69,6 +71,8 @@
   --z-peach-ink: #a23a12;
   --z-chart-ink: #0f7a66;
   --z-destructive: #c62f27;
+  --z-missed-mark: #d9774b;
+  --z-skipped-mark: rgba(21, 23, 26, 0.16);
 
   --z-lg-bg: rgba(255, 255, 255, 0.34);
   --z-lg-highlight: rgba(255, 255, 255, 0.85);

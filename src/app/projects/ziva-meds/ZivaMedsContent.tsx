@@ -38,7 +38,6 @@ import { useTheme } from "@/components/ThemeProvider";
 import {
   AlarmRingingScreen,
   AppLockScreen,
-  Bar,
   CalendarScreen,
   HomeFan,
   HomeScreen,
@@ -50,6 +49,8 @@ import {
   PhoneFrame,
   ReportScreen,
   SummaryCardLarge,
+  WEEK,
+  WeekDots,
   Z,
 } from "./DeviceMockups";
 
@@ -370,7 +371,7 @@ const highlights = [
     icon: ChartBarFill,
     tint: "ziva-tint-mint",
     title: "Reports a doctor can read",
-    body: "A Swift Charts trend over the previous period, a per-medication breakdown and an A4 PDF to share.",
+    body: "A half-circle gauge with a bar per day, the change against the prior period, a per-medication breakdown and an A4 PDF to share.",
   },
   {
     icon: LockFill,
@@ -789,10 +790,10 @@ function Design() {
               </div>
               <div className="mt-6">
                 <p className="text-[0.8125rem] font-medium" style={{ color: Z.secondary }}>
-                  Adherence · hatched, grows in once
+                  Adherence · one dot per day, today as a ring
                 </p>
-                <div className="mt-2">
-                  <Bar value={0.94} height={26} />
+                <div className="mt-3">
+                  <WeekDots days={WEEK} size={22} gap={12} />
                 </div>
               </div>
             </div>
@@ -905,7 +906,7 @@ const specs: { label: string; value: ReactNode }[] = [
   {
     label: "Charts & reports",
     value:
-      "Swift Charts line marks with Catmull-Rom interpolation, this period over the last; day, week and month buckets for 7, 30 and 90 days; an A4 PDF rendered from the same SwiftUI views; CSV export of everything.",
+      "A scrubbable half-circle gauge drawn in SwiftUI, one bar per day or per week over 7, 30 and 90 days, with the change against the prior period; Swift Charts bars for the week on each patient's page; an A4 PDF rendered from the same SwiftUI views; CSV export of everything.",
   },
   {
     label: "Security",
@@ -1158,7 +1159,7 @@ export default function ZivaMedsContent() {
           subtitle="on one screen."
           body="Home opens with a greeting and a summary card: doses taken, weekly adherence and who is on the schedule. Below it, every dose grouped by time slot. The slot that is due right now carries its own Skip, Snooze and Take tray."
           points={[
-            "Summary card with weekly adherence and today's progress, animated in as the screen appears",
+            "Summary card with a dot per day of the last week and a dot per dose today, animated in as the screen appears",
             "Refill card in the attention tint when a pack is low or empty, with a one-tap Refill",
             "Due-now tray: Skip, Snooze and Take, plus Take Late and Mark Missed for anything overdue",
             "Long-press any row for Taken at…, Undo and the rest of the dose menu, with a haptic on every decision",
@@ -1177,7 +1178,7 @@ export default function ZivaMedsContent() {
           eyebrow="Patients"
           title="One app for the whole"
           subtitle="household."
-          body="Each person gets a card: relationship, age, a cut-out portrait on a pastel tint, today's doses and last week's adherence. It zooms open into their medications, schedules, appointments and history."
+          body="Each person gets a card: relationship and age, a cut-out portrait standing over its glow, today's doses in the corner and last week's adherence as seven dots on a frosted panel. It zooms open into their medications, schedules, appointments and history."
           points={[
             "Nine medication forms, a colour and photo per medication, weekday schedules with their own alarm tone",
             "Pause a medication until a date or indefinitely, end it, or read through its dose history",
@@ -1216,11 +1217,11 @@ export default function ZivaMedsContent() {
           eyebrow="Reports"
           title="Adherence, in a form"
           subtitle="a doctor can read."
-          body="Swift Charts turns the dose log into a trend for the last seven days, four weeks or three months, drawn over the previous period for comparison, with the time of day that slips called out in a sentence."
+          body="The dose log becomes a half-circle gauge for the last seven days, thirty days or three months: one bar per day, or per week, around a mint arc with the goal tick, the change against the prior period inside, and the time of day that slips called out in a sentence."
           points={[
-            "Adherence rate with a period-over-period delta",
+            "Scrub the ring to see any day's doses and outcome; tap a medication to narrow the report to it",
             "Taken, skipped and missed counts, and a per-medication breakdown",
-            "A Missed & Skipped list that links straight into dose history",
+            "Adherence rate with a period-over-period delta and an 80% goal",
             "A4 PDF export, and a Share with a Doctor flow for one patient and one period",
           ]}
           device={
